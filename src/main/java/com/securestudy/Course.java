@@ -32,4 +32,8 @@ public class Course {
     System.out.println();
   }
 
+  public boolean hasExam(String examName) {
+    return this.exams.contains(examName);
+  }
+
 }

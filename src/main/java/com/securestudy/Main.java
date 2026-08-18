@@ -7,12 +7,16 @@ public class Main {
     algebra.addExam("Algebra I");
     algebra.addExam("Algebra II");
     algebra.printSummary();
-    System.out.println("Number of exmans: " + algebra.getExamCount());
+    System.out.println("Number of exams: " + algebra.getExamCount());
 
     try {
       algebra.addExam("");
     } catch (IllegalArgumentException e) {
       System.out.println("Error: " + e.getMessage());
     }
+
+    System.out.println(algebra.hasExam("Algebra I"));
+    System.out.println(algebra.hasExam("Algebra III"));
+
   }
 }
