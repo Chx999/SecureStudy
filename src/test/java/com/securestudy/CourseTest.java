@@ -25,10 +25,24 @@ class CourseTest {
 
     // Act
     IllegalArgumentException exception = assertThrows(
+        IllegalArgumentException.class, () -> course.addExam(""));
+
+    // Assert
+    assertEquals("The exam name can not be blank", exception.getMessage());
+  }
+
+  @Test
+  void rejectsNullExamName() {
+    // Arrange
+    Course course = new Course("Algebra");
+
+    // Act
+    IllegalArgumentException exception = assertThrows(
         IllegalArgumentException.class, () -> course.addExam(null));
 
     // Assert
     assertEquals("The exam name can not be blank", exception.getMessage());
     assertEquals(0, course.getExamCount());
   }
+
 }
