@@ -232,7 +232,36 @@ git log --oneline --decorate --all --graph
 - `git diff --cached` 查看已经暂存、即将提交的修改；
 - 提交前应检查 `git status` 和 diff。
 
-### 4.3 分支
+### 4.3 修改最新提交
+
+如果最新 commit 的信息写错，并且尚未推送到共享远程仓库，可以修改它：
+
+```bash
+git commit --amend -m "new commit message"
+```
+
+例如：
+
+```bash
+git commit --amend -m "test: separate blank and null validation"
+```
+
+`--amend` 不是直接编辑原 commit，而是用当前暂存区内容和新信息创建一个替代提交，因此 commit hash 会变化。
+
+使用前应确认：
+
+```bash
+git status
+git log -1 --oneline
+```
+
+- 适合修改最新提交的信息，或补入最新提交中遗漏的文件；
+- 如果只修改信息，先确保暂存区没有意外内容；
+- 对尚未推送的个人分支使用通常比较安全；
+- 已推送到共享远程仓库的 commit 不应随意 amend，因为这会重写其他人可能已经使用的历史；
+- `--amend` 只能直接修改最新 commit，更早的 commit 需要其他历史编辑方法，目前暂时不学习。
+
+### 4.4 分支
 
 创建并切换到功能分支：
 
@@ -244,7 +273,7 @@ git switch -c feature/find-exam
 
 未提交修改属于工作区，不属于任何分支。只要不会覆盖文件，切换分支时 Git 可以保留这些修改，所以提交前可能感觉两个分支的内容一样。
 
-### 4.4 快进合并
+### 4.5 快进合并
 
 ```bash
 git switch main
@@ -263,7 +292,7 @@ git branch -d feature/find-exam
 
 删除已合并的分支指针不会删除 `main` 中的代码。
 
-### 4.5 .gitignore
+### 4.6 .gitignore
 
 当前忽略：
 
