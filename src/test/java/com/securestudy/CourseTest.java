@@ -12,7 +12,7 @@ class CourseTest {
   @Test
   void countsAddedExams() {
     // Arrange
-    Course course = new Course("Algebra");
+    Course course = new Course("ALG101", "Algebra");
     Exam algebraOne = new Exam(
         "Algebra I",
         LocalDate.of(2026, 10, 15));
@@ -32,7 +32,7 @@ class CourseTest {
   @Test
   void rejectsNullExam() {
     // Arrange
-    Course course = new Course("Algebra");
+    Course course = new Course("ALG101", "Algebra");
 
     // Act
     IllegalArgumentException exception = assertThrows(
@@ -46,7 +46,7 @@ class CourseTest {
   @Test
   void findsExamByName() {
     // Arrange
-    Course course = new Course("Algebra");
+    Course course = new Course("ALG101", "Algebra");
     Exam algebraOne = new Exam(
         "Algebra I",
         LocalDate.of(2026, 10, 15));
@@ -55,6 +55,39 @@ class CourseTest {
     // Act and assert
     assertTrue(course.hasExam("Algebra I"));
     assertFalse(course.hasExam("Algebra III"));
+  }
+
+  @Test
+  void storesCodeAndName() {
+    // Arrange and act
+    String code = "ALG101";
+    String name = "Algebra";
+
+    // Act
+    Course course = new Course(code, name);
+
+    // Assert
+    assertEquals(code, course.getCode());
+    assertEquals(name, course.getName());
+
+  }
+
+  @Test
+  void rejectsBlankCode() {
+    IllegalArgumentException exception = assertThrows(
+        IllegalArgumentException.class,
+        () -> new Course("   ", "Algebra"));
+
+    assertEquals("Course code cannot be blank", exception.getMessage());
+  }
+
+  @Test
+  void rejectsBlankName() {
+    IllegalArgumentException exception = assertThrows(
+        IllegalArgumentException.class,
+        () -> new Course("ALG101", "   "));
+
+    assertEquals("Course name cannot be blank", exception.getMessage());
   }
 
 }

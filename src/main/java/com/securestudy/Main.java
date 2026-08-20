@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class Main {
   public static void main(String[] args) {
-    Course algebra = new Course("algebra");
+    Course algebra = new Course("ALG101", "algebra");
 
     Exam algebraOne = new Exam(
         "Algebra I",
