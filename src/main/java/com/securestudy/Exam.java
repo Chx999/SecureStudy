@@ -5,6 +5,7 @@ import java.time.LocalDate;
 public class Exam {
   private String name;
   private LocalDate date;
+  private ExamStatus status;
 
   public Exam(String name, LocalDate date) {
     if (name == null || name.isBlank()) {
@@ -16,8 +17,10 @@ public class Exam {
 
     this.name = name;
     this.date = date;
+    this.status = ExamStatus.SCHEDULED;
   }
 
+  // Getters and setters
   public String getName() {
     return this.name;
   }
@@ -25,4 +28,13 @@ public class Exam {
   public LocalDate getDate() {
     return this.date;
   }
+
+  public ExamStatus getStatus() {
+    return this.status;
+  }
+
+  public void markAsCompleted() {
+    this.status = ExamStatus.COMPLETED;
+  }
+
 }

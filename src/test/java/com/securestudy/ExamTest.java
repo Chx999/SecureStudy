@@ -1,6 +1,7 @@
 package com.securestudy;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -40,6 +41,27 @@ class ExamTest {
     assertThrows(
         IllegalArgumentException.class,
         () -> new Exam("Algebra I", null));
+  }
+
+  @Test
+  void startsAsScheduled() {
+    // Arrange and act
+    Exam exam = new Exam("Algebral", LocalDate.of(2010, 10, 10));
+
+    // Assert
+    assertEquals(ExamStatus.SCHEDULED, exam.getStatus());
+  }
+
+  @Test
+  void canBeMarkAsCompleted() {
+    // Arrange
+    Exam exam = new Exam("Algebral", LocalDate.of(2010, 10, 10));
+
+    // Act
+    exam.markAsCompleted();
+
+    // Assert
+    assertEquals(ExamStatus.COMPLETED, exam.getStatus());
   }
 
 }
