@@ -2,7 +2,7 @@
 
 更新日期：2026-08-19
 
-这份笔记只记录已经实际学习和练习过的内容。当前尚未开始 JUnit、Spring Boot、SQL 和 PostgreSQL。
+这份笔记只记录已经实际学习和练习过的内容。当前尚未开始 Spring Boot、SQL 和 PostgreSQL。
 
 ## 1. 当前项目
 
@@ -393,14 +393,117 @@ compile → test → package
 
 ### 5.5 依赖和仓库
 
-依赖（dependency）是项目使用的第三方库。Maven 以后可以根据 `pom.xml` 自动下载 JUnit、Spring Boot 等依赖。
+依赖（dependency）是项目使用的第三方库。Maven 已经根据 `pom.xml` 下载 JUnit，以后也会用相同方式管理 Spring Boot 等依赖。
 
 - Maven Central：常用公共远程仓库；
 - `~/.m2/repository/`：本机 Maven 仓库；
 - 首次构建出现大量 `Downloading` 通常是正常现象；
 - 已下载文件通常会被后续构建复用。
 
-## 6. 已遇到的错误及根因
+## 6. JUnit 基础
+
+### 6.1 JUnit 解决什么问题
+
+人工打印结果需要人观察和判断，JUnit 可以自动比较实际结果与预期结果。测试失败时，Maven 构建也会失败，从而阻止错误代码被当作正常结果交付。
+
+测试代码位于：
+
+```text
+src/test/java/com/securestudy/
+```
+
+Maven 将测试编译到：
+
+```text
+target/test-classes/
+```
+
+JUnit 依赖使用：
+
+```xml
+<scope>test</scope>
+```
+
+这表示依赖只用于测试的编译和运行，不进入正式应用代码。
+
+### 6.2 测试方法和 AAA
+
+`@Test` 告诉 JUnit 该方法是测试方法。测试不需要 `main()`，Maven 和 JUnit 会负责发现并执行它。
+
+```java
+@Test
+void countsAddedExams() {
+    // Arrange: 准备对象和数据
+    Course course = new Course("Algebra");
+
+    // Act: 执行要测试的行为
+    course.addExam("Algebra I");
+    course.addExam("Algebra II");
+
+    // Assert: 验证实际结果
+    assertEquals(2, course.getExamCount());
+}
+```
+
+AAA 表示：
+
+- Arrange：准备测试条件；
+- Act：执行目标行为；
+- Assert：验证结果。
+
+### 6.3 assertEquals
+
+基本格式：
+
+```java
+assertEquals(expected, actual);
+```
+
+- `expected` 是预期结果；
+- `actual` 是程序产生的实际结果；
+- 两者不相等时测试失败。
+
+### 6.4 assertThrows
+
+`assertThrows` 验证一段代码是否抛出预期异常：
+
+```java
+IllegalArgumentException exception = assertThrows(
+    IllegalArgumentException.class,
+    () -> course.addExam("")
+);
+```
+
+- `IllegalArgumentException.class` 是预期异常类型；
+- `() -> course.addExam("")` 是交给 JUnit 执行的无参数 Lambda；
+- `assertThrows` 返回捕获到的异常对象；
+- `exception.getMessage()` 可以取得并验证异常信息。
+
+```java
+assertEquals("The exam name can not be blank", exception.getMessage());
+```
+
+### 6.5 阅读测试结果
+
+```text
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+```
+
+- `Tests run`：执行的测试数量；
+- `Failures`：测试执行完成，但断言不符合预期；
+- `Errors`：测试执行中出现未正确处理的问题；
+- `Skipped`：被跳过的测试。
+
+测试显示绿色只代表现有断言通过，不代表需求覆盖完整。测试名称、输入场景和断言必须一致。例如，空字符串和 `null` 应分别测试，否则可能在修改测试时意外丢失一个场景。
+
+运行所有测试：
+
+```bash
+mvn clean test
+```
+
+## 7. 已遇到的错误及根因
 
 ### Git 无法运行 less
 
@@ -437,7 +540,7 @@ git merge --ff-only feature/find-exam
 
 Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作已经完成。
 
-## 7. 技术英语
+## 8. 技术英语
 
 | English | 中文 |
 | --- | --- |
@@ -469,7 +572,7 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 
 > Mi proyecto se llama SecureStudy. Su objetivo es desarrollar un sistema que ayude a los estudiantes a organizar sus exámenes y prepararse para ellos.
 
-## 8. 当前掌握层级
+## 9. 当前掌握层级
 
 ### 必须掌握
 
@@ -482,7 +585,8 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 - Git 工作区、暂存区和 commit；
 - 分支是指向 commit 的指针；
 - Maven 读取 `pom.xml` 并管理构建；
-- `clean`、`compile`、`test`、`package` 的基本作用。
+- `clean`、`compile`、`test`、`package` 的基本作用；
+- JUnit `@Test`、AAA、`assertEquals` 和 `assertThrows`。
 
 ### 了解即可
 
@@ -494,14 +598,13 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 
 ### 尚未学习
 
-- JUnit 自动化测试；
 - Maven 复杂插件配置；
 - Spring Boot；
 - SQL 和 PostgreSQL；
 - REST API；
 - Docker 和 CI/CD。
 
-## 9. 自测问题
+## 10. 自测问题
 
 1. `Course` 类和 `algebra` 对象有什么区别？
 2. 为什么 `exams` 应该是 `private`？
@@ -518,3 +621,8 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 13. `pom.xml` 解决什么问题？
 14. 为什么不应提交 `target/`？
 15. `mvn package` 为什么也会执行编译和测试阶段？
+16. JUnit 测试为什么不需要 `main()`？
+17. Arrange、Act、Assert 分别负责什么？
+18. `assertEquals(expected, actual)` 中两个参数的顺序是什么？
+19. `assertThrows` 为什么需要接收 Lambda？
+20. 为什么测试全部通过仍不一定代表需求覆盖完整？
