@@ -20,7 +20,6 @@ public class Exam {
     this.status = ExamStatus.SCHEDULED;
   }
 
-  // Getters and setters
   public String getName() {
     return this.name;
   }

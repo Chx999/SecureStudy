@@ -46,16 +46,16 @@ class ExamTest {
   @Test
   void startsAsScheduled() {
     // Arrange and act
-    Exam exam = new Exam("Algebral", LocalDate.of(2010, 10, 10));
+    Exam exam = new Exam("Algebra", LocalDate.of(2010, 10, 10));
 
     // Assert
     assertEquals(ExamStatus.SCHEDULED, exam.getStatus());
   }
 
   @Test
-  void canBeMarkAsCompleted() {
+  void canBeMarkedAsCompleted() {
     // Arrange
-    Exam exam = new Exam("Algebral", LocalDate.of(2010, 10, 10));
+    Exam exam = new Exam("Algebra", LocalDate.of(2010, 10, 10));
 
     // Act
     exam.markAsCompleted();
