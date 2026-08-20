@@ -43,9 +43,10 @@ SecureStudy V1 范围：
 - Git commit、feature branch、fast-forward merge 和 `--amend`；
 - Maven、`pom.xml`、`compile`、`test` 和 `package`；
 - JUnit `@Test`、`assertEquals`、`assertThrows` 和 AAA；
-- `Course` 的考试数量、空白输入和 `null` 输入测试。
+- `Course` 的考试数量、空白输入和 `null` 输入测试；
+- composition、`LocalDate`、`Exam` 对象和 `ExamStatus` enum。
 
-当前阶段：第 1 周已完成，准备进入 Java OOP 深化。
+当前阶段：第 2 周已完成，准备进入 Collections。
 
 ## 3. 每周负担
 
@@ -69,7 +70,7 @@ UB 作业或考试繁忙时缩减到 2 至 3 小时：
 | 周次 | 状态 | 核心知识 | SecureStudy 实践 | 验收结果 |
 | --- | --- | --- | --- | --- |
 | 第 1 周 | 已完成 | class、object、封装、`List`、异常、Git、Maven、JUnit 入门 | `Course`、考试名称、`hasExam()` 和 3 个测试 | 能解释对象、异常、commit、classpath、Maven 和基础断言 |
-| 第 2 周 | 未开始 | OOP 深化：构造器、方法、组合、`enum` | 创建 `Exam` 类，加入名称、日期和考试状态 | `Course` 保存 `Exam` 对象，不再只保存字符串 |
+| 第 2 周 | 已完成 | OOP 深化：构造器、方法、组合、`enum` | 创建 `Exam` 类，加入名称、日期和考试状态 | `Course` 保存 `Exam` 对象，不再只保存字符串 |
 | 第 3 周 | 未开始 | Collections：`List`、`Set`、`Map` | 管理多个课程，按课程编号查找并处理重复数据 | 能解释三种集合的用途和基本复杂度 |
 | 第 4 周 | 未开始 | Generics、Lambda、Stream 基础 | 查询即将到来的考试，按日期排序和筛选 | 能读懂和编写简单 Lambda，不写复杂 Stream 链 |
 | 第 5 周 | 未开始 | File I/O、异常传播、JVM 基础 | 导出课程摘要到文本文件并读取 | 理解 heap、stack、JDK、JRE、JVM 和文件异常 |
@@ -170,15 +171,16 @@ UB 作业或考试繁忙时缩减到 2 至 3 小时：
 
 ## 8. 当前下一步
 
-第 1 周验收结果：
+第 2 周验收结果：
 
-- 3 个 JUnit 测试通过；
-- JUnit 内容已加入 `LEARNING_NOTES.md`；
-- Maven 可以完成 clean、test 和 package。
+- `Exam` 保存名称、`LocalDate` 和 `ExamStatus`；
+- `Course` 使用 `List<Exam>` 完成对象组合；
+- 9 个 JUnit 测试通过；
+- composition、enum 和测试隔离已加入 `LEARNING_NOTES.md`。
 
-第 2 周下一步：
+第 3 周下一步：
 
-> 将考试从一个 `String` 升级成真正的 `Exam` 对象，并理解对象组合（composition）。
+> 学习 `List`、`Set` 和 `Map` 的差异，并使用课程编号管理多个课程。
 
 ## 9. 每周复盘模板
 

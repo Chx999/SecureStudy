@@ -132,16 +132,71 @@ try {
 
 ```java
 public boolean hasExam(String examName) {
-    return exams.contains(examName);
+    for (Exam exam : exams) {
+        if (exam.getName().equals(examName)) {
+            return true;
+        }
+    }
+    return false;
 }
 ```
 
-`ArrayList.contains()` 从第一个元素开始依次比较：
+当前查找从第一个 `Exam` 开始依次比较名称：
 
 - 第一个元素匹配：比较 1 次；
 - 最后一个元素匹配：比较 `n` 次；
 - 元素不存在：比较 `n` 次；
 - 最坏时间复杂度：`O(n)`。
+
+### 2.7 对象组合
+
+最初的 `Course` 只保存考试名称：
+
+```java
+private List<String> exams;
+```
+
+当考试需要同时保存名称、日期和状态时，字符串不再足够，因此创建 `Exam` 类并改为：
+
+```java
+private List<Exam> exams;
+```
+
+一个对象包含其他对象叫对象组合（composition）。当前职责划分：
+
+- `Exam` 负责保证自己的名称和日期有效；
+- `Course` 负责管理 `Exam` 集合；
+- `Course.addExam()` 只需要拒绝 `null`，不重复验证 `Exam` 内部字段。
+
+泛型提供类型安全。`List<Exam>` 可以接收 `Exam`，不能接收 `String`。
+
+### 2.8 LocalDate
+
+`LocalDate` 表示不带具体时间和时区的日期，适合考试日期：
+
+```java
+LocalDate date = LocalDate.of(2026, 10, 15);
+```
+
+`LocalDate` 不是字符串。只要对象不是 `null`，它就代表一个有效日期，因此不需要调用 `toString().isBlank()`。
+
+### 2.9 enum
+
+`enum` 表示有限且固定的一组值：
+
+```java
+public enum ExamStatus {
+    SCHEDULED,
+    COMPLETED,
+    CANCELLED
+}
+```
+
+- `ExamStatus` 是类型；
+- `SCHEDULED` 是该类型的一个值；
+- enum 防止 `"completd"` 等无效字符串状态；
+- 新 `Exam` 默认使用 `ExamStatus.SCHEDULED`；
+- `markAsCompleted()` 表达业务行为，比允许任意值的通用 setter 更明确。
 
 ## 3. Package、编译和运行
 
@@ -497,6 +552,8 @@ BUILD SUCCESS
 
 测试显示绿色只代表现有断言通过，不代表需求覆盖完整。测试名称、输入场景和断言必须一致。例如，空字符串和 `null` 应分别测试，否则可能在修改测试时意外丢失一个场景。
 
+每个测试应独立准备自己需要的数据。避免同时使用同名类字段和局部变量，否则会产生变量遮蔽（variable shadowing），让测试实际操作的对象难以判断。
+
 运行所有测试：
 
 ```bash
@@ -580,6 +637,8 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 - `private` 和封装的目的；
 - 构造器为什么需要初始化列表；
 - `List` 与 `ArrayList` 的基本关系；
+- `List<Exam>` 的泛型类型安全；
+- composition、`LocalDate` 和 enum 的用途；
 - `throw`、`try` 和 `catch`；
 - package、classpath 和完全限定类名；
 - Git 工作区、暂存区和 commit；
@@ -626,3 +685,8 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 18. `assertEquals(expected, actual)` 中两个参数的顺序是什么？
 19. `assertThrows` 为什么需要接收 Lambda？
 20. 为什么测试全部通过仍不一定代表需求覆盖完整？
+21. 为什么 `Course` 应保存 `Exam`，而不是继续保存多个字符串？
+22. `Exam` 和 `Course` 分别负责验证什么？
+23. 为什么 `LocalDate` 只需要检查 `null`，不需要检查 blank？
+24. enum 相比字符串状态有什么优势？
+25. 为什么每个测试应独立准备数据？
