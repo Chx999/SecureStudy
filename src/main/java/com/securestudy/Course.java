@@ -5,18 +5,18 @@ import java.util.ArrayList;
 
 public class Course {
   private String name;
-  private List<String> exams;
+  private List<Exam> exams;
 
   public Course(String name) {
     this.name = name;
-    this.exams = new ArrayList<String>();
+    this.exams = new ArrayList<>();
   }
 
-  public void addExam(String examName) throws IllegalArgumentException {
-    if (examName == null || examName.isBlank())
-      throw new IllegalArgumentException("The exam name can not be blank");
-    else
-      this.exams.add(examName);
+  public void addExam(Exam exam) {
+    if (exam == null)
+      throw new IllegalArgumentException("Exam cannot be null");
+
+    this.exams.add(exam);
   }
 
   public int getExamCount() {
@@ -24,16 +24,19 @@ public class Course {
   }
 
   public void printSummary() {
-    System.out.print("The course is: " + this.name + "\n");
-    System.out.print("This course contains these exams: ");
-    for (String exam : this.exams) {
-      System.out.print(exam + " ");
+    for (Exam exam : exams) {
+      System.out.println(exam.getName() +
+          " (" + exam.getDate() + ")");
     }
-    System.out.println();
   }
 
   public boolean hasExam(String examName) {
-    return this.exams.contains(examName);
+    for (Exam exam : exams) {
+      if (exam.getName().equals(examName)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }
