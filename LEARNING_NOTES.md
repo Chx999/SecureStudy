@@ -198,6 +198,50 @@ public enum ExamStatus {
 - 新 `Exam` 默认使用 `ExamStatus.SCHEDULED`；
 - `markAsCompleted()` 表达业务行为，比允许任意值的通用 setter 更明确。
 
+### 2.10 List、Set 和 Map
+
+三种集合解决不同问题：
+
+| 类型 | 核心特点 | SecureStudy 用途 |
+| --- | --- | --- |
+| `List<E>` | 有顺序、允许重复、可按索引访问 | 一个课程中的考试列表 |
+| `Set<E>` | 元素唯一、不通过索引访问 | 一个课程的不重复标签 |
+| `Map<K, V>` | key 对应 value，key 唯一 | 课程编号对应课程对象 |
+
+当前具体实现：
+
+```java
+private List<Exam> exams = new ArrayList<>();
+private Set<String> tags = new HashSet<>();
+private Map<String, Course> courses = new HashMap<>();
+```
+
+常用操作：
+
+```java
+list.add(value);
+set.add(value);
+set.contains(value);
+map.put(key, value);
+map.get(key);
+map.containsKey(key);
+```
+
+`HashSet.add()` 会返回是否真正加入了新元素。第一次加入返回 `true`，重复元素返回 `false`。
+
+`HashMap.put()` 遇到相同 key 时会替换旧 value。`CourseCatalog` 在调用 `put()` 前使用 `containsKey()` 检查课程编号，避免不同课程被无提示覆盖。
+
+课程编号已经保存在 `Course` 中，所以 `CourseCatalog.addCourse(Course course)` 使用 `course.getCode()` 作为 key，不要求调用者重复传入编号。这遵循单一事实来源（Single Source of Truth）。
+
+当前复杂度只需掌握平均情况：
+
+- `ArrayList` 按名称顺序查找：`O(n)`；
+- `HashSet.add()` 和 `contains()`：平均 `O(1)`；
+- `HashMap.put()`、`get()` 和 `containsKey()`：平均 `O(1)`；
+- `HashSet` 和 `HashMap` 不保证遍历顺序。
+
+业务处理可以不同：重复课程编号可能代表数据冲突，因此抛出异常；重复标签通常无害，因此 `Set` 保持一个值并返回 `false`。
+
 ## 3. Package、编译和运行
 
 ### 3.1 Package
@@ -639,6 +683,7 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 - `List` 与 `ArrayList` 的基本关系；
 - `List<Exam>` 的泛型类型安全；
 - composition、`LocalDate` 和 enum 的用途；
+- `List`、`Set`、`Map` 的用途和基本选择；
 - `throw`、`try` 和 `catch`；
 - package、classpath 和完全限定类名；
 - Git 工作区、暂存区和 commit；
@@ -690,3 +735,8 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 23. 为什么 `LocalDate` 只需要检查 `null`，不需要检查 blank？
 24. enum 相比字符串状态有什么优势？
 25. 为什么每个测试应独立准备数据？
+26. `List`、`Set`、`Map` 分别适合什么场景？
+27. 为什么课程编号适合作为 `Map` 的 key？
+28. 为什么 `addCourse()` 不需要再次接收 code 参数？
+29. `HashMap.put()` 遇到重复 key 会发生什么？
+30. 为什么重复课程编号抛异常，而重复标签只返回 `false`？

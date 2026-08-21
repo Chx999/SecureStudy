@@ -44,9 +44,10 @@ SecureStudy V1 范围：
 - Maven、`pom.xml`、`compile`、`test` 和 `package`；
 - JUnit `@Test`、`assertEquals`、`assertThrows` 和 AAA；
 - `Course` 的考试数量、空白输入和 `null` 输入测试；
-- composition、`LocalDate`、`Exam` 对象和 `ExamStatus` enum。
+- composition、`LocalDate`、`Exam` 对象和 `ExamStatus` enum；
+- `List`、`Set`、`Map`、课程目录和唯一课程标签。
 
-当前阶段：第 2 周已完成，准备进入 Collections。
+当前阶段：第 3 周已完成，准备进入 Generics、Lambda 和 Stream。
 
 ## 3. 每周负担
 
@@ -71,7 +72,7 @@ UB 作业或考试繁忙时缩减到 2 至 3 小时：
 | --- | --- | --- | --- | --- |
 | 第 1 周 | 已完成 | class、object、封装、`List`、异常、Git、Maven、JUnit 入门 | `Course`、考试名称、`hasExam()` 和 3 个测试 | 能解释对象、异常、commit、classpath、Maven 和基础断言 |
 | 第 2 周 | 已完成 | OOP 深化：构造器、方法、组合、`enum` | 创建 `Exam` 类，加入名称、日期和考试状态 | `Course` 保存 `Exam` 对象，不再只保存字符串 |
-| 第 3 周 | 未开始 | Collections：`List`、`Set`、`Map` | 管理多个课程，按课程编号查找并处理重复数据 | 能解释三种集合的用途和基本复杂度 |
+| 第 3 周 | 已完成 | Collections：`List`、`Set`、`Map` | 管理多个课程，按课程编号查找并处理重复数据 | 能解释三种集合的用途和基本复杂度 |
 | 第 4 周 | 未开始 | Generics、Lambda、Stream 基础 | 查询即将到来的考试，按日期排序和筛选 | 能读懂和编写简单 Lambda，不写复杂 Stream 链 |
 | 第 5 周 | 未开始 | File I/O、异常传播、JVM 基础 | 导出课程摘要到文本文件并读取 | 理解 heap、stack、JDK、JRE、JVM 和文件异常 |
 | 第 6 周 | 未开始 | Thread、Runnable、race condition 概念；Java 阶段复习 | 完成独立并发小练习，不加入正式业务功能 | 了解基础线程问题，不要求掌握高级并发 |
@@ -171,16 +172,16 @@ UB 作业或考试繁忙时缩减到 2 至 3 小时：
 
 ## 8. 当前下一步
 
-第 2 周验收结果：
+第 3 周验收结果：
 
-- `Exam` 保存名称、`LocalDate` 和 `ExamStatus`；
-- `Course` 使用 `List<Exam>` 完成对象组合；
-- 9 个 JUnit 测试通过；
-- composition、enum 和测试隔离已加入 `LEARNING_NOTES.md`。
+- `CourseCatalog` 使用 `Map<String, Course>` 按编号管理课程；
+- `Course` 使用 `Set<String>` 保存唯一标签；
+- 能解释 `List`、`Set`、`Map` 的业务差异；
+- 21 个 JUnit 测试通过。
 
-第 3 周下一步：
+第 4 周下一步：
 
-> 学习 `List`、`Set` 和 `Map` 的差异，并使用课程编号管理多个课程。
+> 学习基础 Generics、Lambda 和 Stream，并按日期查询即将到来的考试。
 
 ## 9. 每周复盘模板
 
