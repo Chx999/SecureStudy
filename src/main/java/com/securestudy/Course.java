@@ -2,11 +2,14 @@ package com.securestudy;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 public class Course {
   private String code;
   private String name;
   private List<Exam> exams;
+  private Set<String> tags;
 
   public Course(String code, String name) {
     if (code == null || code.isBlank()) {
@@ -19,6 +22,7 @@ public class Course {
     this.code = code;
     this.name = name;
     this.exams = new ArrayList<>();
+    this.tags = new HashSet<>();
   }
 
   public String getCode() {
@@ -55,6 +59,21 @@ public class Course {
       }
     }
     return false;
+  }
+
+  public boolean addTag(String tag) {
+    if (tag == null || tag.isBlank()) {
+      throw new IllegalArgumentException("Course tag cannot be blank");
+    }
+    return this.tags.add(tag);
+  }
+
+  public boolean hasTag(String tag) {
+    return tags.contains(tag);
+  }
+
+  public int getTagCount() {
+    return tags.size();
   }
 
 }

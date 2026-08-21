@@ -90,4 +90,44 @@ class CourseTest {
     assertEquals("Course name cannot be blank", exception.getMessage());
   }
 
+  @Test
+  void addsTag() {
+    Course course = new Course("ALG101", "Algebra");
+
+    assertTrue(course.addTag("math"));
+    assertTrue(course.hasTag("math"));
+    assertFalse(course.hasTag("required"));
+    assertEquals(1, course.getTagCount());
+  }
+
+  @Test
+  void ignoresDuplicateTag() {
+    Course course = new Course("ALG101", "Algebra");
+
+    course.addTag("math");
+    assertFalse(course.addTag("math"));
+    assertEquals(1, course.getTagCount());
+  }
+
+  @Test
+  void rejectsBlankTag() {
+    Course course = new Course("ALG101", "Algebra");
+
+    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        () -> course.addTag("  "));
+
+    assertEquals("Course tag cannot be blank", exception.getMessage());
+  }
+
+  @Test
+  void rejectsNullTag() {
+    Course course = new Course("ALG101", "Algebra");
+
+    IllegalArgumentException exception = assertThrows(
+        IllegalArgumentException.class,
+        () -> course.addTag(null));
+
+    assertEquals("Course tag cannot be blank", exception.getMessage());
+  }
+
 }
