@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
+import java.time.LocalDate;
+import java.util.Comparator;
 
 public class Course {
   private String code;
@@ -82,4 +84,13 @@ public class Course {
         .toList();
   }
 
+  public List<Exam> getExamsOnOrAfter(LocalDate fromDate) {
+    if (fromDate == null) {
+      throw new IllegalArgumentException("Start date cannot be null");
+    }
+    return this.exams.stream()
+        .filter(exam -> !exam.getDate().isBefore(fromDate))
+        .sorted(Comparator.comparing(exam -> exam.getDate()))
+        .toList();
+  }
 }

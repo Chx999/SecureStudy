@@ -152,4 +152,42 @@ class CourseTest {
     assertEquals(2, course.getExamCount());
   }
 
+  @Test
+  void returnsExamsOnOrAfterDateInDateOrder() {
+    Course course = new Course("ALG101", "Algebra");
+    Exam algebraOne = new Exam(
+        "Algebra I",
+        LocalDate.of(2026, 10, 1));
+    Exam algebraTwo = new Exam(
+        "Algebra II",
+        LocalDate.of(2026, 10, 15));
+    Exam algebraThree = new Exam(
+        "Algebra III",
+        LocalDate.of(2026, 10, 20));
+    course.addExam(algebraThree);
+    course.addExam(algebraOne);
+    course.addExam(algebraTwo);
+
+    LocalDate fromDate = LocalDate.of(2026, 10, 15);
+    List<Exam> examsOnOrAfter = course.getExamsOnOrAfter(fromDate);
+
+    assertEquals(2, examsOnOrAfter.size());
+    assertSame(algebraTwo, examsOnOrAfter.get(0));
+    assertSame(algebraThree, examsOnOrAfter.get(1));
+    assertFalse(examsOnOrAfter.contains(algebraOne));
+    assertEquals(3, course.getExamCount());
+
+  }
+
+  @Test
+  void rejectsNullStartDate() {
+    Course course = new Course("ALG101", "Algebra");
+
+    IllegalArgumentException exception = assertThrows(
+        IllegalArgumentException.class,
+        () -> course.getExamsOnOrAfter(null));
+
+    assertEquals("Start date cannot be null", exception.getMessage());
+  }
+
 }
