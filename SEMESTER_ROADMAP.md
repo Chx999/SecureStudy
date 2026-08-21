@@ -68,24 +68,24 @@ UB 作业或考试繁忙时缩减到 2 至 3 小时：
 
 ## 4. 16 周路线
 
-| 周次 | 状态 | 核心知识 | SecureStudy 实践 | 验收结果 |
-| --- | --- | --- | --- | --- |
-| 第 1 周 | 已完成 | class、object、封装、`List`、异常、Git、Maven、JUnit 入门 | `Course`、考试名称、`hasExam()` 和 3 个测试 | 能解释对象、异常、commit、classpath、Maven 和基础断言 |
-| 第 2 周 | 已完成 | OOP 深化：构造器、方法、组合、`enum` | 创建 `Exam` 类，加入名称、日期和考试状态 | `Course` 保存 `Exam` 对象，不再只保存字符串 |
-| 第 3 周 | 已完成 | Collections：`List`、`Set`、`Map` | 管理多个课程，按课程编号查找并处理重复数据 | 能解释三种集合的用途和基本复杂度 |
-| 第 4 周 | 未开始 | Generics、Lambda、Stream 基础 | 查询即将到来的考试，按日期排序和筛选 | 能读懂和编写简单 Lambda，不写复杂 Stream 链 |
-| 第 5 周 | 未开始 | File I/O、异常传播、JVM 基础 | 导出课程摘要到文本文件并读取 | 理解 heap、stack、JDK、JRE、JVM 和文件异常 |
-| 第 6 周 | 未开始 | Thread、Runnable、race condition 概念；Java 阶段复习 | 完成独立并发小练习，不加入正式业务功能 | 了解基础线程问题，不要求掌握高级并发 |
-| 第 7 周 | 未开始 | GitHub：remote、push、pull、PR、merge conflict、tag | 创建 GitHub 仓库，通过 PR 合并一次功能 | 能自己解决一次人为制造的冲突 |
-| 第 8 周 | 未开始 | PostgreSQL、SQL CRUD、主键和约束 | 安装 PostgreSQL，手写 `users` 和 `courses` 表 | 能执行 CREATE、INSERT、SELECT、UPDATE、DELETE |
-| 第 9 周 | 未开始 | 外键、JOIN、GROUP BY、ORDER BY、ER 图 | 设计 `users`、`courses`、`exams`、`study_tasks` | ER 图合理，能编写基础 JOIN 查询 |
-| 第 10 周 | 未开始 | Transaction、ACID、INDEX、数据库进程和连接 | 实验事务回滚，观察 PostgreSQL 进程和端口 | 能解释 host、port、credentials 和 connection refused |
-| 第 11 周 | 未开始 | IP、端口、TCP、DNS、HTTP request/response、JSON | 设计 SecureStudy REST API | 能解释 HTTP 方法、状态码、Header、Body 和 JSON |
-| 第 12 周 | 未开始 | Spring Boot、Controller、Dependency Injection、配置 | 启动 Spring Boot API，实现健康检查和课程查询 | 能用 `curl` 请求 API，并解释请求如何到达 Controller |
-| 第 13 周 | 未开始 | Controller、Service、Repository、DTO | 完成课程 CRUD，先使用简单内存实现 | 能解释每一层职责，不把所有逻辑放进 Controller |
-| 第 14 周 | 未开始 | JPA、PostgreSQL 连接、实体关系 | 将用户、课程、考试和复习任务保存到 PostgreSQL | 应用重启后数据仍存在，能排查数据库连接错误 |
-| 第 15 周 | 未开始 | Validation、统一异常处理、Logging、OpenAPI | 加入输入校验、错误响应、日志和 Swagger | 错误请求返回合理状态码，API 文档可访问 |
-| 第 16 周 | 未开始 | JUnit 整合、Linux 进程、端口、日志和部署 | 完成测试和 JAR 打包，在 Linux 上手动运行 V1 | 能部署、查看 PID/端口/日志、停止并重启程序 |
+| 周次     | 状态  | 核心知识                                           | SecureStudy 实践                             | 验收结果                                           |
+| ------ | --- | ---------------------------------------------- | ------------------------------------------ | ---------------------------------------------- |
+| 第 1 周  | 已完成 | class、object、封装、`List`、异常、Git、Maven、JUnit 入门   | `Course`、考试名称、`hasExam()` 和 3 个测试          | 能解释对象、异常、commit、classpath、Maven 和基础断言          |
+| 第 2 周  | 已完成 | OOP 深化：构造器、方法、组合、`enum`                        | 创建 `Exam` 类，加入名称、日期和考试状态                   | `Course` 保存 `Exam` 对象，不再只保存字符串                 |
+| 第 3 周  | 已完成 | Collections：`List`、`Set`、`Map`                 | 管理多个课程，按课程编号查找并处理重复数据                      | 能解释三种集合的用途和基本复杂度                               |
+| 第 4 周  | 未开始 | Generics、Lambda、Stream 基础                      | 查询即将到来的考试，按日期排序和筛选                         | 能读懂和编写简单 Lambda，不写复杂 Stream 链                  |
+| 第 5 周  | 未开始 | File I/O、异常传播、JVM 基础                           | 导出课程摘要到文本文件并读取                             | 理解 heap、stack、JDK、JRE、JVM 和文件异常                |
+| 第 6 周  | 未开始 | Thread、Runnable、race condition 概念；Java 阶段复习    | 完成独立并发小练习，不加入正式业务功能                        | 了解基础线程问题，不要求掌握高级并发                             |
+| 第 7 周  | 未开始 | GitHub：remote、push、pull、PR、merge conflict、tag  | 创建 GitHub 仓库，通过 PR 合并一次功能                  | 能自己解决一次人为制造的冲突                                 |
+| 第 8 周  | 未开始 | PostgreSQL、SQL CRUD、主键和约束                      | 安装 PostgreSQL，手写 `users` 和 `courses` 表     | 能执行 CREATE、INSERT、SELECT、UPDATE、DELETE         |
+| 第 9 周  | 未开始 | 外键、JOIN、GROUP BY、ORDER BY、ER 图                 | 设计 `users`、`courses`、`exams`、`study_tasks` | ER 图合理，能编写基础 JOIN 查询                           |
+| 第 10 周 | 未开始 | Transaction、ACID、INDEX、数据库进程和连接                | 实验事务回滚，观察 PostgreSQL 进程和端口                 | 能解释 host、port、credentials 和 connection refused |
+| 第 11 周 | 未开始 | IP、端口、TCP、DNS、HTTP request/response、JSON       | 设计 SecureStudy REST API                    | 能解释 HTTP 方法、状态码、Header、Body 和 JSON             |
+| 第 12 周 | 未开始 | Spring Boot、Controller、Dependency Injection、配置 | 启动 Spring Boot API，实现健康检查和课程查询             | 能用 `curl` 请求 API，并解释请求如何到达 Controller          |
+| 第 13 周 | 未开始 | Controller、Service、Repository、DTO              | 完成课程 CRUD，先使用简单内存实现                        | 能解释每一层职责，不把所有逻辑放进 Controller                   |
+| 第 14 周 | 未开始 | JPA、PostgreSQL 连接、实体关系                         | 将用户、课程、考试和复习任务保存到 PostgreSQL               | 应用重启后数据仍存在，能排查数据库连接错误                          |
+| 第 15 周 | 未开始 | Validation、统一异常处理、Logging、OpenAPI              | 加入输入校验、错误响应、日志和 Swagger                    | 错误请求返回合理状态码，API 文档可访问                          |
+| 第 16 周 | 未开始 | JUnit 整合、Linux 进程、端口、日志和部署                     | 完成测试和 JAR 打包，在 Linux 上手动运行 V1              | 能部署、查看 PID/端口/日志、停止并重启程序                       |
 
 周次是顺序参考，不是强制日历。UB 考试周可以暂停新内容并将后续阶段顺延。
 
