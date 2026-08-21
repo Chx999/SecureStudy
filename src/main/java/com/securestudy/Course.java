@@ -76,4 +76,10 @@ public class Course {
     return tags.size();
   }
 
+  public List<Exam> getCompletedExams() {
+    return this.exams.stream()
+        .filter(exam -> exam.getStatus() == ExamStatus.COMPLETED)
+        .toList();
+  }
+
 }

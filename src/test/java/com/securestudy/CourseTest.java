@@ -2,10 +2,12 @@ package com.securestudy;
 
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 class CourseTest {
 
@@ -128,6 +130,26 @@ class CourseTest {
         () -> course.addTag(null));
 
     assertEquals("Course tag cannot be blank", exception.getMessage());
+  }
+
+  @Test
+  void returnsOnlyCompletedExams() {
+    Course course = new Course("ALG101", "Algebra");
+    Exam algebraOne = new Exam(
+        "Algebra I",
+        LocalDate.of(2026, 10, 15));
+    Exam algebraTwo = new Exam(
+        "Algebra II",
+        LocalDate.of(2026, 10, 20));
+    algebraOne.markAsCompleted();
+
+    course.addExam(algebraOne);
+    course.addExam(algebraTwo);
+
+    List<Exam> completedExams = course.getCompletedExams();
+    assertEquals(1, completedExams.size());
+    assertSame(algebraOne, completedExams.get(0));
+    assertEquals(2, course.getExamCount());
   }
 
 }
