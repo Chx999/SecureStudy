@@ -459,6 +459,82 @@ course → Course object → exams list → Exam object
 
 当前不学习 GC 算法、JVM参数或性能调优。
 
+### 2.19 Process、Thread 和 Runnable
+
+Process（进程）是正在运行的程序实例。启动 Java 程序时，Linux 创建 Java进程，进程中运行 JVM 和一个或多个线程。
+
+Java程序启动时至少有 main thread，它从 `main()` 开始执行。每个线程有自己的 stack，多个线程可以共享 heap 中的对象：
+
+```text
+Java process
+├── main thread   → Stack 1
+├── worker thread → Stack 2
+└── shared Heap
+```
+
+`Runnable` 描述要执行的任务，`Thread` 表示执行任务的线程：
+
+```java
+Runnable task = () -> result.append("done");
+Thread worker = new Thread(task);
+```
+
+三个重要方法：
+
+- `start()`：启动新线程，由新线程执行任务；
+- `run()`：像普通方法一样在当前线程执行，不会启动新线程；
+- `join()`：让当前线程等待目标线程结束。
+
+```java
+worker.start();
+worker.join();
+```
+
+`join()` 可能抛出 checked exception `InterruptedException`。它只负责等待，不会让共享数据操作自动变得线程安全。
+
+### 2.20 原子操作、Race Condition 和 synchronized
+
+原子操作（atomic operation）表示从其他线程的角度看不可分割的操作：要么尚未发生，要么已经完整完成，其他线程不能在中间状态插入修改。
+
+`value++` 不是原子操作，可以简化为：
+
+```text
+读取 value
+计算 value + 1
+写回 value
+```
+
+两个线程可能都读取相同旧值并写回相同新值，导致一次更新丢失（lost update）。最终结果取决于线程执行顺序，这叫 race condition（竞态条件）。
+
+```text
+value = 0
+Thread A 读取 0
+Thread B 读取 0
+Thread A 写入 1
+Thread B 写入 1
+最终 value = 1，而不是 2
+```
+
+`synchronized` 让使用同一把锁的线程一次只有一个进入受保护的方法：
+
+```java
+synchronized void increment() {
+    value++;
+}
+```
+
+`value++` 内部仍有多个步骤，但其他使用同一锁的线程不能在方法执行中间进入，因此整个 `increment()` 对这些线程表现为原子执行。
+
+当前同步计数器实验：两个线程共享同一个 counter，各执行 10,000 次 `increment()`；先启动两个线程，再分别 `join()`，最终断言结果为 20,000。
+
+```text
+start()        启动线程
+join()         等待线程结束
+synchronized   控制共享数据的并发访问
+```
+
+暂时不学习 `AtomicInteger`、线程池、显式锁、虚拟线程或高级 Java Memory Model。
+
 ## 3. Package、编译和运行
 
 ### 3.1 Package
@@ -906,6 +982,7 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 - 泛型类型参数、基础 Lambda、`Predicate` 和 Stream 流水线；
 - File I/O、`Path`、`Files` 和 `IOException` 传播；
 - JDK、JRE、JVM、stack、heap、引用和 GC 基础；
+- Thread、Runnable、`start()`、`join()` 和基础 `synchronized`；
 - `throw`、`try` 和 `catch`；
 - package、classpath 和完全限定类名；
 - Git 工作区、暂存区和 commit；
@@ -921,6 +998,7 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 - Maven Central 和本地仓库；
 - fast-forward merge；
 - Java 21 编译目标与当前 JDK 26 的区别。
+- race condition、lost update 和原子操作概念。
 
 ### 尚未学习
 
@@ -980,3 +1058,12 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 46. 为什么执行 `exam = null` 后，Course 列表中的 Exam 仍然存在？
 47. 对象在什么情况下才有资格被 GC 回收？
 48. 普通文件为什么能在 Java进程结束后继续存在？
+49. Process 和 thread 有什么区别？
+50. 多个线程的 stack 和 heap 是怎样分配的？
+51. Runnable 和 Thread 分别表示什么？
+52. `start()` 与直接调用 `run()` 有什么区别？
+53. `join()` 解决什么问题，又不能解决什么问题？
+54. 什么是原子操作？
+55. 为什么 `value++` 不是原子操作？
+56. 什么是 race condition 和 lost update？
+57. `synchronized` 如何保护共享修改？
