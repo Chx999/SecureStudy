@@ -323,6 +323,142 @@ return exams.stream()
 
 日期筛选使用 `!date.isBefore(fromDate)`，因此边界日期本身也会被包含。测试应故意使用乱序输入，否则即使遗漏 `sorted()` 也可能通过。
 
+### 2.14 File I/O
+
+I/O 表示 Input / Output：
+
+- Output：程序将数据写入文件；
+- Input：程序从文件读取数据。
+
+现代 Java 可以使用 `Path` 表示路径，使用 `Files` 执行文件操作：
+
+```java
+Path file = tempDir.resolve("course-summary.txt");
+Files.writeString(file, content);
+String actual = Files.readString(file);
+```
+
+SecureStudy 的职责划分：
+
+- `Course.getSummary()` 生成摘要文本；
+- `CourseSummaryExporter` 负责将摘要写入指定 `Path`；
+- 调用者决定文件保存位置，不在 Exporter 中写死路径。
+
+`Course.getSummary()` 使用 `StringBuilder` 和连续 `append()` 构造文本，避免在每一步创建不必要的中间字符串。
+
+JUnit 的 `@TempDir` 会在测试前创建临时目录并注入 `Path`，测试结束后由 JUnit 主动清理。普通导出文件不会因为 Java进程结束而自动删除。
+
+内存和磁盘的区别：
+
+```text
+内存中的 Java 对象：进程结束后消失
+写入磁盘的普通文件：进程结束后仍然存在
+```
+
+### 2.15 异常传播
+
+文件操作可能因为路径、权限、磁盘等问题抛出 `IOException`。它是 checked exception，Java要求调用者捕获或继续声明：
+
+```java
+public void export(Course course, Path file) throws IOException {
+    Files.writeString(file, course.getSummary());
+}
+```
+
+当前 Exporter 不决定如何恢复，而是将 `IOException` 继续交给上层调用者。这叫异常传播（exception propagation）。
+
+两类异常的当前区别：
+
+- `IllegalArgumentException`：调用者传入了无效参数，是 unchecked exception；
+- `IOException`：文件系统操作失败，是 checked exception。
+
+禁止使用不做任何处理的空 `catch`：
+
+```java
+try {
+    exporter.export(course, file);
+} catch (IOException exception) {
+    // 错误被隐藏
+}
+```
+
+空 `catch` 会吞掉异常，测试可能在没有成功写入文件时仍然通过，形成假阳性（false positive）。测试方法可以声明 `throws IOException`，让 JUnit 将文件错误报告为 Error。
+
+### 2.16 JDK、JRE 和 JVM
+
+Java 程序的基本执行过程：
+
+```text
+.java 源代码
+→ javac 编译
+→ .class 字节码
+→ JVM 加载和执行
+→ 机器指令
+→ CPU 执行
+```
+
+- JDK（Java Development Kit）：开发工具包，包含编译和运行所需工具；
+- JRE（Java Runtime Environment）：概念上由 JVM、标准库和运行组件组成；
+- JVM（Java Virtual Machine）：加载并执行字节码、管理内存和垃圾回收。
+
+现代 Java 通常安装完整 JDK，不一定单独安装传统 JRE。
+
+Maven 不是编译器或 JVM。`mvn compile` 读取 `pom.xml` 并调用 JDK 中的编译工具；`java -cp ...` 启动 JVM 并执行编译后的类。
+
+### 2.17 Stack、Heap 和引用
+
+当前使用简化内存模型：
+
+```text
+JVM memory
+├── Stack：方法调用、栈帧、局部变量和引用
+└── Heap：对象和数组
+```
+
+执行：
+
+```java
+Course course = new Course("ALG101", "Algebra");
+```
+
+可以简化理解为：局部变量 `course` 在 stack frame 中保存引用，`Course` 对象位于 heap。
+
+```text
+Stack                         Heap
+main frame
+└── course reference ───────→ Course object
+                              ├── exams → ArrayList object
+                              └── tags  → HashSet object
+```
+
+每次调用方法会创建新的 stack frame，方法返回后对应 frame 被移除。每个线程有自己的 stack，多个线程可以共享 heap 中的对象。
+
+`null` 表示引用没有指向对象。对 `null` 调用方法会产生 `NullPointerException`。
+
+### 2.18 Garbage Collection
+
+GC（Garbage Collection）回收已经无法再通过任何引用访问的 heap 对象。
+
+```java
+course.addExam(exam);
+exam = null;
+```
+
+此时 Exam 不能被回收，因为仍存在引用路径：
+
+```text
+course → Course object → exams list → Exam object
+```
+
+只有当对象不可达（unreachable）时，它才有资格被 GC 回收。有资格回收不代表立即回收。
+
+基础错误区别：
+
+- `StackOverflowError`：方法调用栈通常过深，例如无限递归；
+- `OutOfMemoryError`：heap 等内存区域无法继续分配对象。
+
+当前不学习 GC 算法、JVM参数或性能调优。
+
 ## 3. Package、编译和运行
 
 ### 3.1 Package
@@ -768,6 +904,8 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 - composition、`LocalDate` 和 enum 的用途；
 - `List`、`Set`、`Map` 的用途和基本选择；
 - 泛型类型参数、基础 Lambda、`Predicate` 和 Stream 流水线；
+- File I/O、`Path`、`Files` 和 `IOException` 传播；
+- JDK、JRE、JVM、stack、heap、引用和 GC 基础；
 - `throw`、`try` 和 `catch`；
 - package、classpath 和完全限定类名；
 - Git 工作区、暂存区和 commit；
@@ -831,3 +969,14 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 35. `filter()`、`sorted()` 和 `toList()` 分别做什么？
 36. 为什么排序测试需要故意使用乱序输入？
 37. 为什么 `BUILD SUCCESS` 不一定代表新测试真的执行了？
+38. `Path` 和 `Files` 分别负责什么？
+39. 为什么 Exporter 接收 `Path`，而不是写死输出位置？
+40. `IllegalArgumentException` 和 `IOException` 当前有什么区别？
+41. 为什么空 `catch` 可能产生假阳性测试？
+42. JDK、JRE 和 JVM 分别是什么？
+43. `.java` 如何变成 CPU 可以执行的程序？
+44. Stack 和 heap 分别主要保存什么？
+45. 局部变量引用和对象本身有什么区别？
+46. 为什么执行 `exam = null` 后，Course 列表中的 Exam 仍然存在？
+47. 对象在什么情况下才有资格被 GC 回收？
+48. 普通文件为什么能在 Java进程结束后继续存在？
