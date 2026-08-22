@@ -48,10 +48,7 @@ public class Course {
   }
 
   public void printSummary() {
-    for (Exam exam : exams) {
-      System.out.println(exam.getName() +
-          " (" + exam.getDate() + ")");
-    }
+    System.out.print(getSummary());
   }
 
   public boolean hasExam(String examName) {
@@ -93,4 +90,26 @@ public class Course {
         .sorted(Comparator.comparing(exam -> exam.getDate()))
         .toList();
   }
+
+  public String getSummary() {
+    StringBuilder summary = new StringBuilder();
+    summary.append(this.code)
+        .append(": ")
+        .append(this.name)
+        .append(System.lineSeparator());
+
+    for (Exam exam : this.exams) {
+      summary.append("- ")
+          .append(exam.getName())
+          .append(" (")
+          .append(exam.getDate())
+          .append(") [")
+          .append(exam.getStatus())
+          .append("]")
+          .append(System.lineSeparator());
+    }
+
+    return summary.toString();
+  }
+
 }

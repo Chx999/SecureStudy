@@ -190,4 +190,19 @@ class CourseTest {
     assertEquals("Start date cannot be null", exception.getMessage());
   }
 
+  @Test
+  void returnsCourseSummary() {
+    Course course = new Course("ALG101", "Algebra");
+    Exam algebraOne = new Exam(
+        "Algebra I",
+        LocalDate.of(2026, 10, 15));
+    course.addExam(algebraOne);
+
+    String newline = System.lineSeparator();
+    String expected = "ALG101: Algebra" + newline
+        + "- Algebra I (2026-10-15) [SCHEDULED]" + newline;
+
+    assertEquals(expected, course.getSummary());
+  }
+
 }
