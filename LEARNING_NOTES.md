@@ -242,6 +242,87 @@ map.containsKey(key);
 
 业务处理可以不同：重复课程编号可能代表数据冲突，因此抛出异常；重复标签通常无害，因此 `Set` 保持一个值并返回 `false`。
 
+### 2.11 Generics
+
+Generics（泛型）使用类型参数限制可以保存和返回的数据类型：
+
+```java
+class Box<T> {
+    private T value;
+
+    T getValue() {
+        return value;
+    }
+}
+```
+
+`T` 是类型占位符，创建对象时确定实际类型：
+
+```java
+Box<String> textBox = new Box<>("hello");
+Box<Course> courseBox = new Box<>(course);
+```
+
+泛型让编译器提前发现类型错误，并让 `getValue()` 返回正确类型，不需要手动强制转换。项目中的 `List<Exam>`、`Set<String>` 和 `Map<String, Course>` 都是泛型的实际应用。
+
+### 2.12 Lambda 和 Predicate
+
+Lambda 可以把一小段行为表示为值：
+
+```java
+Predicate<Exam> isCompleted =
+    exam -> exam.getStatus() == ExamStatus.COMPLETED;
+```
+
+`Predicate<Exam>` 表示接收一个 `Exam` 并返回 `boolean` 的判断规则。执行规则：
+
+```java
+boolean result = isCompleted.test(exam);
+```
+
+Lambda 两侧含义：
+
+```text
+exam -> exam.getStatus() == ExamStatus.COMPLETED
+参数    根据参数执行并返回结果
+```
+
+enum 常量是唯一实例，因此状态可以使用 `==` 比较。
+
+### 2.13 Stream
+
+Stream 用流水线方式处理集合：
+
+```text
+collection → stream → filter → sorted → toList
+```
+
+筛选已完成考试：
+
+```java
+return exams.stream()
+    .filter(exam -> exam.getStatus() == ExamStatus.COMPLETED)
+    .toList();
+```
+
+筛选指定日期及之后的考试，并按日期排序：
+
+```java
+return exams.stream()
+    .filter(exam -> !exam.getDate().isBefore(fromDate))
+    .sorted(Comparator.comparing(exam -> exam.getDate()))
+    .toList();
+```
+
+- `stream()` 开始处理集合；
+- `filter()` 保留 Predicate 返回 `true` 的元素；
+- `sorted()` 根据 Comparator 排序；
+- `Comparator.comparing()` 指定用于比较的字段；
+- `toList()` 产生新的结果列表；
+- 当前流水线不会修改原始 `exams` 列表。
+
+日期筛选使用 `!date.isBefore(fromDate)`，因此边界日期本身也会被包含。测试应故意使用乱序输入，否则即使遗漏 `sorted()` 也可能通过。
+
 ## 3. Package、编译和运行
 
 ### 3.1 Package
@@ -598,6 +679,8 @@ BUILD SUCCESS
 
 每个测试应独立准备自己需要的数据。避免同时使用同名类字段和局部变量，否则会产生变量遮蔽（variable shadowing），让测试实际操作的对象难以判断。
 
+测试方法如果漏写 `@Test`，Java 仍可能编译成功，但 JUnit 不会执行它。除了看 `BUILD SUCCESS`，还应检查 `Running ...Test` 和 `Tests run` 数量。
+
 运行所有测试：
 
 ```bash
@@ -684,6 +767,7 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 - `List<Exam>` 的泛型类型安全；
 - composition、`LocalDate` 和 enum 的用途；
 - `List`、`Set`、`Map` 的用途和基本选择；
+- 泛型类型参数、基础 Lambda、`Predicate` 和 Stream 流水线；
 - `throw`、`try` 和 `catch`；
 - package、classpath 和完全限定类名；
 - Git 工作区、暂存区和 commit；
@@ -740,3 +824,10 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 28. 为什么 `addCourse()` 不需要再次接收 code 参数？
 29. `HashMap.put()` 遇到重复 key 会发生什么？
 30. 为什么重复课程编号抛异常，而重复标签只返回 `false`？
+31. `Box<T>` 中的 `T` 表示什么？
+32. 泛型如何帮助编译器提前发现错误？
+33. `Predicate<Exam>` 接收什么并返回什么？
+34. Lambda 中 `->` 左右两侧分别表示什么？
+35. `filter()`、`sorted()` 和 `toList()` 分别做什么？
+36. 为什么排序测试需要故意使用乱序输入？
+37. 为什么 `BUILD SUCCESS` 不一定代表新测试真的执行了？
