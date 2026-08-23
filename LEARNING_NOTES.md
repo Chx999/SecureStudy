@@ -887,7 +887,7 @@ git pull --ff-only
 git fetch --prune
 ```
 
-### 4.9 当前小结
+### 4.9 PR工作流总结
 
 1. `main` 分支保存当前稳定的代码。开发新功能时不应直接修改 `main`，而是从 `main` 创建功能分支，完成测试和审查后再通过 PR 合并。
 2. `commit` 将暂存区中的修改保存到本地仓库；`push` 将本地 commit 上传到 GitHub 远程仓库；PR 请求审查并合并分支修改；`merge` 真正合并两个分支。
