@@ -2,6 +2,8 @@ package com.securestudy;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Comparator;
+import java.util.List;
 
 public class CourseCatalog {
   private Map<String, Course> courses;
@@ -33,6 +35,16 @@ public class CourseCatalog {
 
   public int getCourseCount() {
     return courses.size();
+  }
+
+  public List<Course> getCoursesWithTag(String tag) {
+    if (tag == null || tag.isBlank()) {
+      throw new IllegalArgumentException("Course tag cannot be blank");
+    }
+    return this.courses.values().stream()
+        .filter(course -> course.hasTag(tag))
+        .sorted(Comparator.comparing(course -> course.getCode()))
+        .toList();
   }
 
 }

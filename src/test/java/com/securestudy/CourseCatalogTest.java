@@ -1,5 +1,7 @@
 package com.securestudy;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -78,6 +80,42 @@ class CourseCatalogTest {
     assertTrue(courses.hasCourse("ALG101"));
     assertFalse(courses.hasCourse("PROG101"));
 
+  }
+
+  @Test
+  void returnsCoursesWithTagInCodeOrder() {
+    CourseCatalog courses = new CourseCatalog();
+
+    Course course1 = new Course("ALG101", "Algebra");
+    course1.addTag("math");
+
+    Course course2 = new Course("MAT201", "Calcul");
+    course2.addTag("math");
+
+    Course course3 = new Course("PRO101", "Programacion");
+    course3.addTag("programming");
+
+    courses.addCourse(course2);
+    courses.addCourse(course3);
+    courses.addCourse(course1);
+
+    List<Course> coursesWithMathTag = courses.getCoursesWithTag("math");
+    assertEquals("ALG101", coursesWithMathTag.get(0).getCode());
+    assertEquals("MAT201", coursesWithMathTag.get(1).getCode());
+    assertEquals(2, coursesWithMathTag.size());
+  }
+
+  @Test
+  void rejectsBlankTagFilter() {
+    CourseCatalog courses = new CourseCatalog();
+    Course course1 = new Course("ALG101", "Algebra");
+    course1.addTag("math");
+    courses.addCourse(course1);
+
+    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        () -> courses.getCoursesWithTag("   "));
+
+    assertEquals("Course tag cannot be blank", exception.getMessage());
   }
 
 }
