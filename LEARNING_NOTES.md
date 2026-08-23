@@ -887,6 +887,43 @@ git pull --ff-only
 git fetch --prune
 ```
 
+### 4.9 当前小结
+
+1. `main` 分支保存当前稳定的代码。开发新功能时不应直接修改 `main`，而是从 `main` 创建功能分支，完成测试和审查后再通过 PR 合并。
+2. `commit` 将暂存区中的修改保存到本地仓库；`push` 将本地 commit 上传到 GitHub 远程仓库；PR 请求审查并合并分支修改；`merge` 真正合并两个分支。
+3. PR 合并发生在 GitHub 远程仓库中，本地 `main` 不会自动同步，因此需要使用 `git pull --ff-only` 更新本地 `main`。
+
+当前文档 PR 的完整操作命令：
+
+```bash
+# 检查、暂存并提交文档
+git diff --check
+git diff
+git add LEARNING_NOTES.md
+git diff --cached
+git commit -m "docs: summarize pull request workflow"
+
+# 首次推送功能分支并建立跟踪关系
+git push -u origin docs/pr-workflow-summary
+
+# 创建并在浏览器中查看 PR
+gh pr create \
+  --base main \
+  --head docs/pr-workflow-summary \
+  --title "docs: summarize pull request workflow" \
+  --body "Summarize the branch, commit, push, PR, merge, and pull workflow."
+gh pr view --web
+
+# 审查通过后，将 <PR编号> 替换为实际编号
+gh pr merge <PR编号> --merge --delete-branch
+
+# 同步本地 main 并清理过期的远程跟踪记录
+git switch main
+git pull --ff-only
+git fetch --prune
+git status
+```
+
 ## 5. Maven 基础
 
 ### 5.1 Maven 是什么
