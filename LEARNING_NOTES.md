@@ -833,6 +833,60 @@ git push
 
 `push` 只上传 commit，不会上传工作区中尚未提交的修改。`origin/main` 是 Git 在本地保存的远程分支状态记录，不是另一个需要直接编辑的本地分支。
 
+### 4.8 Pull Request
+
+Pull Request（PR）是在 GitHub 上请求审查并合并两个分支之间的修改。它不是 `git pull` 命令。
+
+SecureStudy 的第一个 PR：
+
+```text
+base: main
+head: feature/remove-course
+```
+
+- base：接收修改的目标分支；
+- head / compare：提供修改的来源分支；
+- PR 展示 Conversation、Commits、Files changed 和 Checks；
+- PR 创建后可以继续向 head 分支 push，新 commit 会自动加入同一个 PR；
+- GitHub 只能看到已经 commit 并 push 的修改，不能看到本地工作区。
+
+完整流程：
+
+```text
+从 main 创建功能分支
+→ 编写代码和测试
+→ commit
+→ push 功能分支
+→ 创建 PR
+→ review
+→ merge 到 GitHub main
+→ 更新本地 main
+→ 删除已完成的功能分支
+```
+
+首次推送功能分支：
+
+```bash
+git push -u origin feature/remove-course
+```
+
+创建 PR 时比较的是该功能分支相对 `main` 多出的 commit。PR #1 使用普通 merge 方式合并，因此 GitHub 创建了一个独立的 merge commit，并保留了功能 commit 的分支关系。
+
+如果 PR 在 GitHub 网页上合并，本地 `main` 不会自动变化，通常需要：
+
+```bash
+git switch main
+git pull --ff-only
+```
+
+`git pull` 从远程取得新 commit 并整合到当前本地分支；`git push` 则把本地 commit 上传到远程。`--ff-only` 可以避免 pull 时意外创建 merge commit。
+
+远程功能分支删除后，可以清理本地保存的过期远程跟踪记录：
+
+```bash
+git fetch --prune
+```
+
 ## 5. Maven 基础
 
 ### 5.1 Maven 是什么
@@ -1211,3 +1265,7 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 64. `origin` 表示什么？
 65. `git push -u origin main` 的每一部分表示什么？
 66. 为什么 `git push` 不会上传尚未 commit 的修改？
+67. PR 的 base branch 和 head branch 分别是什么？
+68. 为什么创建 PR 前必须先 commit 并 push 功能分支？
+69. `git pull` 和 Pull Request 有什么区别？
+70. PR 在 GitHub 合并后，为什么本地 `main` 仍可能需要 pull？

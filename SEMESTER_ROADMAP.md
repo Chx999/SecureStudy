@@ -50,7 +50,7 @@ SecureStudy V1 范围：
 - File I/O、异常传播、JDK/JRE/JVM、stack、heap 和 GC 基础；
 - GitHub remote、首次 push 和远程分支跟踪。
 
-当前阶段：第 7 周进行中，已创建 GitHub 仓库并完成首次 push，下一步练习 Pull Request。
+当前阶段：第 7 周进行中，已通过第一个 Pull Request 合并功能，下一步练习 merge conflict。
 
 ## 3. 每周负担
 
@@ -188,11 +188,13 @@ UB 作业或考试繁忙时缩减到 2 至 3 小时：
 
 - 已创建公开仓库 `https://github.com/Chx999/SecureStudy`；
 - 已配置 `origin`，并让本地 `main` 跟踪 `origin/main`；
-- 已完成首次 push。
+- 已完成首次 push；
+- 通过 PR #1 将 `feature/remove-course` 合并到 `main`；
+- 为删除课程功能添加成功和失败测试，共 39 个 JUnit 测试通过。
 
 下一步：
 
-> 创建功能分支并通过第一个 Pull Request 合并一项小功能。
+> 人为制造一次安全的 merge conflict，理解冲突标记并手动解决。
 
 ## 9. 每周复盘模板
 
