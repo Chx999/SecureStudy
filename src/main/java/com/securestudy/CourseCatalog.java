@@ -47,4 +47,8 @@ public class CourseCatalog {
         .toList();
   }
 
+  public boolean removeCourse(String code) {
+    return courses.remove(code) != null;
+  }
+
 }
