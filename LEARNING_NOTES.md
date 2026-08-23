@@ -1200,7 +1200,420 @@ BUILD SUCCESS
 mvn clean test
 ```
 
-## 7. 已遇到的错误及根因
+## 7. PostgreSQL 和 SQL 基础
+
+### 7.1 Server、client 和持久化
+
+PostgreSQL 是独立运行的数据库服务器，`psql` 和 pgAdmin 是连接服务器的 client：
+
+```text
+用户或 Java 应用
+→ psql / pgAdmin / JDBC
+→ PostgreSQL Server
+→ 磁盘中的 database files
+```
+
+Java 程序结束后，JVM 内存中的对象会消失；已经提交给 PostgreSQL 的数据保存在磁盘中，可以继续存在。
+
+当前环境：
+
+```text
+PostgreSQL 18.6
+host: 127.0.0.1
+port: 5432
+database: securestudy
+role: securestudy
+GUI client: pgAdmin 4
+```
+
+### 7.2 安装、初始化和服务命令
+
+以下命令在 shell 中执行，不是在 `psql` 或 pgAdmin Query Tool 中执行：
+
+```bash
+# 查看 client 和 server 版本
+psql --version
+postgres --version
+
+# 初始化 Arch Linux 默认数据目录，只执行一次
+sudo -iu postgres initdb \
+  --locale=C.utf8 \
+  --encoding=UTF8 \
+  -D /var/lib/postgres/data
+
+# 设置开机启动并立即启动
+sudo systemctl enable --now postgresql
+
+# 检查服务和端口
+systemctl is-enabled postgresql
+systemctl is-active postgresql
+systemctl status postgresql --no-pager
+pg_isready
+pg_isready -h 127.0.0.1 -p 5432
+```
+
+`initdb` 创建 PostgreSQL data directory、系统目录、配置和事务日志结构，但不启动服务器。systemd service 使用 `/var/lib/postgres/data`，并以 Linux 系统用户 `postgres` 运行。
+
+创建应用 role 和 database：
+
+```bash
+# 交互式设置密码，密码不会写入 shell 历史
+sudo -iu postgres createuser \
+  --login \
+  --pwprompt \
+  securestudy
+
+# 创建 database，并让 securestudy role 成为 owner
+sudo -iu postgres createdb \
+  --owner=securestudy \
+  securestudy
+```
+
+```text
+Linux 用户 postgres       运行 server process 并拥有数据库文件
+PostgreSQL role postgres  数据库内部超级用户
+PostgreSQL role securestudy  应用登录身份，不是超级用户
+PostgreSQL database securestudy  SecureStudy 数据的逻辑容器
+```
+
+### 7.3 psql 连接命令
+
+以下命令从 shell 启动 `psql`：
+
+```bash
+# 以 postgres 管理员连接默认 postgres database
+sudo -iu postgres psql
+
+# 通过本地 Unix socket 连接
+psql -U securestudy -d securestudy
+
+# 明确使用 TCP、host 和 port 连接
+psql \
+  -h 127.0.0.1 \
+  -p 5432 \
+  -U securestudy \
+  -d securestudy
+
+# 执行一条命令后立即退出
+psql -U securestudy -d securestudy \
+  -c "SELECT current_user, current_database();"
+```
+
+参数：
+
+```text
+-h  host
+-p  port
+-U  PostgreSQL role / user
+-d  database
+-c  执行一条命令后退出
+```
+
+`postgres=#` 中的 `#` 通常表示当前 role 是超级用户；普通 role 的提示符通常是 `securestudy=>`。
+
+### 7.4 psql 元命令
+
+反斜杠开头的是 `psql` client 自己的元命令，不是 SQL，不需要分号：
+
+```text
+\conninfo       查看当前连接信息
+\du             查看 PostgreSQL roles
+\l              查看 databases
+\dt             查看当前 database 中的 tables
+\d courses      查看 courses 的 columns、indexes 和 constraints
+\q              退出 psql
+```
+
+SQL statement 需要以分号结束：
+
+```sql
+SELECT current_user, current_database();
+```
+
+### 7.5 Table、row 和 column
+
+```text
+database  一组相关 tables 的逻辑容器
+table     一类结构化数据，例如所有课程
+row       一条具体记录，例如 ALG101 课程
+column    一个属性，例如 code 或 title
+```
+
+近似 Java 对应：
+
+```text
+Java class       table structure
+Java field       column
+Java object      row
+List<Course>     多行 Course 数据
+```
+
+单独的 `ALG101` 是 `code` column 中的一个值；`ALG101`、`Algebra` 等属性合起来才是一门课程 row。
+
+### 7.6 CREATE TABLE 和 constraints
+
+当前 `courses` table 的创建过程：
+
+```sql
+CREATE TABLE courses (
+  code VARCHAR(20) PRIMARY KEY,
+  title VARCHAR(100) NOT NULL
+);
+```
+
+```text
+VARCHAR(20)  最多 20 个字符的字符串
+PRIMARY KEY  唯一识别 row，同时要求 UNIQUE 和 NOT NULL
+NOT NULL     不允许缺少值
+```
+
+为已有 table 添加不允许空白字符串的规则：
+
+```sql
+ALTER TABLE courses
+ADD CONSTRAINT courses_code_not_blank
+  CHECK (BTRIM(code) <> ''),
+ADD CONSTRAINT courses_title_not_blank
+  CHECK (BTRIM(title) <> '');
+```
+
+```text
+ALTER TABLE  修改 table structure 或规则
+BTRIM        删除字符串左右两侧空白
+<>           SQL 中的不等于
+CHECK        要求每一行满足指定条件
+```
+
+`NOT NULL` 只拒绝 SQL `NULL`，不会拒绝空字符串 `''`。`NULL` 表示缺少或未知值，`'NULL'` 是普通的四字符字符串。
+
+下一张 `users` table 的设计：
+
+```sql
+CREATE TABLE users (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  username VARCHAR(50) NOT NULL,
+  display_name VARCHAR(100) NOT NULL,
+
+  CONSTRAINT users_username_unique
+    UNIQUE (username),
+
+  CONSTRAINT users_username_not_blank
+    CHECK (BTRIM(username) <> ''),
+
+  CONSTRAINT users_display_name_not_blank
+    CHECK (BTRIM(display_name) <> '')
+);
+```
+
+`GENERATED ALWAYS AS IDENTITY` 让 PostgreSQL 自动生成 id。`UNIQUE` 保证 username 不重复；一张表只有一个 primary key，但可以拥有多个 unique constraints。
+
+### 7.7 INSERT
+
+插入一行：
+
+```sql
+INSERT INTO courses (code, title)
+VALUES ('ALG101', 'Algebra');
+```
+
+成功结果 `INSERT 0 1` 表示插入了 1 行。SQL 字符串使用单引号。
+
+一个 statement 插入多行：
+
+```sql
+INSERT INTO courses (code, title)
+VALUES
+  ('MAT201', 'Calculus'),
+  ('PRO101', 'Programming');
+```
+
+成功结果 `INSERT 0 2` 表示插入了 2 行。
+
+以下是约束实验命令，会故意失败，不应放入正常初始化脚本：
+
+```sql
+-- 重复 primary key，SQLSTATE 23505
+INSERT INTO courses (code, title)
+VALUES ('ALG101', 'Advanced Algebra');
+
+-- 违反 NOT NULL，SQLSTATE 23502
+INSERT INTO courses (code, title)
+VALUES ('MAT201', NULL);
+
+-- 添加 CHECK 后违反非空白规则，SQLSTATE 23514
+INSERT INTO courses (code, title)
+VALUES ('MAT201', '   ');
+```
+
+### 7.8 SELECT
+
+选择指定 columns：
+
+```sql
+SELECT code, title
+FROM courses;
+```
+
+筛选 rows：
+
+```sql
+SELECT code, title
+FROM courses
+WHERE code = 'MAT201';
+```
+
+SQL 使用单个 `=` 比较相等，不使用 Java 的 `==`。
+
+排序：
+
+```sql
+SELECT code, title
+FROM courses
+ORDER BY code ASC;
+```
+
+```sql
+SELECT code, title
+FROM courses
+ORDER BY code DESC;
+```
+
+没有 `ORDER BY` 时，关系型数据库不保证 row 的返回顺序。
+
+统计行数：
+
+```sql
+SELECT COUNT(*)
+FROM courses;
+```
+
+调用函数并为结果设置 alias：
+
+```sql
+SELECT
+  code,
+  title,
+  LENGTH(title) AS title_length
+FROM courses
+ORDER BY code;
+```
+
+查看当前身份和 database：
+
+```sql
+SELECT current_user, current_database();
+```
+
+pgAdmin 对 `SELECT` 显示 `1 rows affected` 时，表示返回了 1 行，不表示修改了数据。
+
+### 7.9 UPDATE
+
+安全做法是先用相同的 `WHERE` 执行 `SELECT`：
+
+```sql
+SELECT code, title
+FROM courses
+WHERE code = 'MAT201';
+```
+
+然后修改并返回新值：
+
+```sql
+UPDATE courses
+SET title = 'Calculus II'
+WHERE code = 'MAT201'
+RETURNING code, title;
+```
+
+```text
+SET        指定新的 column value
+WHERE      限定修改哪些 rows
+RETURNING  返回被修改后的 rows
+```
+
+没有 `WHERE` 的 UPDATE 会修改 table 中所有 rows：
+
+```sql
+-- 危险示例，不要执行
+UPDATE courses
+SET title = 'Unknown';
+```
+
+### 7.10 DELETE
+
+先检查目标：
+
+```sql
+SELECT code, title
+FROM courses
+WHERE code = 'MAT201';
+```
+
+删除并返回被删除的 row：
+
+```sql
+DELETE FROM courses
+WHERE code = 'MAT201'
+RETURNING code, title;
+```
+
+没有 `WHERE` 的 DELETE 会删除 table 中所有 rows：
+
+```sql
+-- 危险示例，不要执行
+DELETE FROM courses;
+```
+
+### 7.11 ALTER 和 UPDATE
+
+```text
+ALTER TABLE  修改 table 的 structure 或 constraints
+UPDATE       修改 table 中具体 rows 的 values
+```
+
+示例：
+
+```sql
+-- 修改结构
+ALTER TABLE courses
+ADD COLUMN credits INTEGER;
+
+-- 修改数据
+UPDATE courses
+SET credits = 6
+WHERE code = 'ALG101';
+```
+
+当前 SQL 分类：
+
+```text
+DDL：CREATE、ALTER、DROP，用于定义结构
+CRUD 数据操作：INSERT、SELECT、UPDATE、DELETE
+```
+
+`INSERT`、`UPDATE` 和 `DELETE` 通常归入 DML；`SELECT` 有时单独称为 DQL。当前先按 CRUD 数据操作理解。
+
+### 7.12 当前错误码
+
+```text
+23505  UNIQUE 或 PRIMARY KEY 重复
+23502  NOT NULL 违规
+23514  CHECK constraint 违规
+```
+
+错误消息会指出 constraint 名称和 failing row。失败的单条 INSERT 不会部分写入数据，也不会覆盖原有 row。
+
+### 7.13 当前安全习惯
+
+- Java 应用使用非超级用户 `securestudy`，不使用 `postgres` role；
+- 密码通过交互提示输入，不写入 shell command、Git 或笔记；
+- `UPDATE` 和 `DELETE` 前先用相同 `WHERE` 执行 `SELECT`；
+- 明确列出 INSERT 和 SELECT 的 columns；
+- 需要顺序时始终写 `ORDER BY`；
+- 区分 SQL `NULL`、字符串 `'NULL'` 和空字符串 `''`；
+- 给 constraints 使用明确名称，方便识别错误来源。
+
+## 8. 已遇到的错误及根因
 
 ### Git 无法运行 less
 
@@ -1237,7 +1650,7 @@ git merge --ff-only feature/find-exam
 
 Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作已经完成。
 
-## 8. 技术英语
+## 9. 技术英语
 
 | English | 中文 |
 | --- | --- |
@@ -1260,6 +1673,14 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 | merge | 合并 |
 | fast-forward | 快进 |
 | time complexity | 时间复杂度 |
+| database server | 数据库服务器 |
+| client | 客户端 |
+| role | 数据库身份 / 角色 |
+| table | 表 |
+| row | 行 / 一条记录 |
+| column | 列 / 一个属性 |
+| primary key | 主键 |
+| constraint | 约束 |
 
 项目介绍修正版：
 
@@ -1269,7 +1690,7 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 
 > Mi proyecto se llama SecureStudy. Su objetivo es desarrollar un sistema que ayude a los estudiantes a organizar sus exámenes y prepararse para ellos.
 
-## 9. 当前掌握层级
+## 10. 当前掌握层级
 
 ### 必须掌握
 
@@ -1305,11 +1726,11 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 
 - Maven 复杂插件配置；
 - Spring Boot；
-- SQL 和 PostgreSQL；
+- SQL JOIN、外键、事务和索引；
 - REST API；
 - Docker 和 CI/CD。
 
-## 10. 自测问题
+## 11. 自测问题
 
 1. `Course` 类和 `algebra` 对象有什么区别？
 2. 为什么 `exams` 应该是 `private`？
@@ -1386,3 +1807,18 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 73. 为什么编辑完冲突文件后还需要执行 `git add`？
 74. branch 和 tag 的指针行为有什么区别？
 75. 为什么普通 `git push` 不一定会上传 tag？
+76. PostgreSQL Server、psql 和 pgAdmin 分别负责什么？
+77. role 和 database 有什么区别？
+78. table、row 和 column 分别是什么？
+79. `PRIMARY KEY` 同时保证什么？
+80. `NULL`、`'NULL'` 和 `''` 有什么区别？
+81. 为什么 `NOT NULL` 不能阻止空字符串？
+82. `CHECK (BTRIM(title) <> '')` 保护什么规则？
+83. `INSERT 0 2` 表示什么？
+84. 为什么没有 `ORDER BY` 时不能依赖查询结果顺序？
+85. `WHERE` 在 SELECT、UPDATE 和 DELETE 中分别起什么作用？
+86. `RETURNING` 有什么用途？
+87. `ALTER TABLE` 和 `UPDATE` 有什么区别？
+88. SQLSTATE `23505`、`23502` 和 `23514` 分别表示什么？
+89. 为什么 UPDATE 和 DELETE 前应先执行使用相同 WHERE 的 SELECT？
+90. `psql` 元命令为什么不需要分号？

@@ -48,9 +48,10 @@ SecureStudy V1 范围：
 - `List`、`Set`、`Map`、课程目录和唯一课程标签；
 - Generics、`Predicate`、Lambda 和 Stream 筛选排序；
 - File I/O、异常传播、JDK/JRE/JVM、stack、heap 和 GC 基础；
-- GitHub remote、首次 push 和远程分支跟踪。
+- GitHub remote、首次 push 和远程分支跟踪；
+- PostgreSQL server、psql、pgAdmin、database、role、table、row 和 column 基础。
 
-当前阶段：第 7 周已完成，准备进入 PostgreSQL 和 SQL 基础。
+当前阶段：第 8 周进行中，正在从零学习 PostgreSQL、SQL CRUD、主键和约束。
 
 ## 3. 每周负担
 
@@ -80,7 +81,7 @@ UB 作业或考试繁忙时缩减到 2 至 3 小时：
 | 第 5 周  | 已完成 | File I/O、异常传播、JVM 基础                           | 导出课程摘要到文本文件并读取                             | 理解 heap、stack、JDK、JRE、JVM 和文件异常                |
 | 第 6 周  | 已完成 | Thread、Runnable、race condition 概念；Java 阶段复习    | 完成独立并发小练习，不加入正式业务功能                        | 了解基础线程问题，不要求掌握高级并发                             |
 | 第 7 周  | 已完成 | GitHub：remote、push、pull、PR、merge conflict、tag  | 创建 GitHub 仓库，通过 PR 合并一次功能                  | 能自己解决一次人为制造的冲突                                 |
-| 第 8 周  | 未开始 | PostgreSQL、SQL CRUD、主键和约束                      | 安装 PostgreSQL，手写 `users` 和 `courses` 表     | 能执行 CREATE、INSERT、SELECT、UPDATE、DELETE         |
+| 第 8 周  | 进行中 | PostgreSQL、SQL CRUD、主键和约束                      | 安装 PostgreSQL，手写 `users` 和 `courses` 表     | 能执行 CREATE、INSERT、SELECT、UPDATE、DELETE         |
 | 第 9 周  | 未开始 | 外键、JOIN、GROUP BY、ORDER BY、ER 图                 | 设计 `users`、`courses`、`exams`、`study_tasks` | ER 图合理，能编写基础 JOIN 查询                           |
 | 第 10 周 | 未开始 | Transaction、ACID、INDEX、数据库进程和连接                | 实验事务回滚，观察 PostgreSQL 进程和端口                 | 能解释 host、port、credentials 和 connection refused |
 | 第 11 周 | 未开始 | IP、端口、TCP、DNS、HTTP request/response、JSON       | 设计 SecureStudy REST API                    | 能解释 HTTP 方法、状态码、Header、Body 和 JSON             |
@@ -195,9 +196,18 @@ UB 作业或考试繁忙时缩减到 2 至 3 小时：
 - 人为制造并手动解决同一行修改产生的 merge conflict；
 - 使用 annotated tag 标记第 7 周里程碑。
 
+第 8 周当前进度：
+
+- 已安装并初始化 PostgreSQL 18.6；
+- 已启动 systemd service，并确认 `127.0.0.1:5432` 接受连接；
+- 已创建非超级用户 `securestudy` role 和同名 database；
+- 已使用 psql 和 pgAdmin 连接数据库；
+- 已创建 `courses` table，练习 INSERT、SELECT、UPDATE 和 DELETE；
+- 已练习 PRIMARY KEY、NOT NULL、CHECK 和 SQLSTATE 错误码。
+
 下一步：
 
-> 安装并启动 PostgreSQL，学习 SQL CRUD、主键和约束。
+> 放慢节奏创建 `users` table，继续练习自动 id、UNIQUE 和基础 CRUD。
 
 ## 9. 每周复盘模板
 
