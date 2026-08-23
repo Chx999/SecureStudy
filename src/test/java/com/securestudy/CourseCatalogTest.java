@@ -118,4 +118,26 @@ class CourseCatalogTest {
     assertEquals("Course tag cannot be blank", exception.getMessage());
   }
 
+  @Test
+  void removeExistingCourse() {
+    CourseCatalog courses = new CourseCatalog();
+    Course course1 = new Course("ALG101", "Algebra");
+    courses.addCourse(course1);
+
+    assertTrue(courses.removeCourse("ALG101"));
+    assertEquals(0, courses.getCourseCount());
+    assertNull(courses.findCourseByCode("ALG101"));
+  }
+
+  @Test
+  void returnsFalseWhenCourseDoesNotExist() {
+    CourseCatalog courses = new CourseCatalog();
+    Course course1 = new Course("ALG101", "Algebra");
+    courses.addCourse(course1);
+
+    assertFalse(courses.removeCourse("MAT201"));
+    assertEquals(1, courses.getCourseCount());
+    assertSame(course1, courses.findCourseByCode("ALG101"));
+  }
+
 }
