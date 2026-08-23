@@ -287,6 +287,77 @@ exam -> exam.getStatus() == ExamStatus.COMPLETED
 参数    根据参数执行并返回结果
 ```
 
+Lambda 的通用形式是：
+
+```java
+参数 -> 表达式
+```
+
+右侧表达式的结果就是 Lambda 的返回值。Lambda 不固定返回 `boolean`，它的目标类型由使用位置决定，这叫 target type（目标类型）。
+
+`filter()` 需要 `Predicate<Course>`：
+
+```java
+.filter(course -> course.hasTag(tag))
+```
+
+这里 `course.hasTag(tag)` 返回 `boolean`，因此 Lambda 类型可以理解为：
+
+```text
+Course → boolean
+```
+
+等价的显式写法：
+
+```java
+Predicate<Course> hasRequestedTag =
+    course -> course.hasTag(tag);
+```
+
+`Comparator.comparing()` 需要一个提取排序字段的 `Function<Course, String>`：
+
+```java
+Comparator.comparing(course -> course.getCode())
+```
+
+这里 `course.getCode()` 返回 `String`，因此内部 Lambda 可以理解为：
+
+```text
+Course → String
+```
+
+等价的显式写法：
+
+```java
+Function<Course, String> getCourseCode =
+    course -> course.getCode();
+```
+
+`Comparator.comparing()` 使用这个 String code 创建 `Comparator<Course>`，然后 `sorted()` 使用 Comparator 对课程排序：
+
+```text
+Course
+→ Lambda 提取 String code
+→ Comparator.comparing 创建 Comparator<Course>
+→ sorted 按 code 排序
+```
+
+三个当前常见类型：
+
+```text
+Predicate<T>    T → boolean   用于判断
+Function<T, R>  T → R         用于转换或提取值
+Comparator<T>   比较两个 T     用于排序
+```
+
+相同的 `参数 -> 表达式` 语法可以返回不同类型，因为右侧表达式和接收它的方法要求不同：
+
+```java
+course -> course.hasTag(tag)  // Course → boolean
+course -> course.getCode()    // Course → String
+exam -> exam.getDate()        // Exam → LocalDate
+```
+
 enum 常量是唯一实例，因此状态可以使用 `==` 比较。
 
 ### 2.13 Stream
@@ -322,6 +393,35 @@ return exams.stream()
 - 当前流水线不会修改原始 `exams` 列表。
 
 日期筛选使用 `!date.isBefore(fromDate)`，因此边界日期本身也会被包含。测试应故意使用乱序输入，否则即使遗漏 `sorted()` 也可能通过。
+
+Java 综合验收使用 `CourseCatalog.getCoursesWithTag()` 同时复习 Map、Lambda 和 Stream：
+
+```java
+return courses.values().stream()
+    .filter(course -> course.hasTag(tag))
+    .sorted(Comparator.comparing(course -> course.getCode()))
+    .toList();
+```
+
+类型和职责变化：
+
+```text
+Map values                    Collection<Course>
+→ stream()                    Stream<Course>
+→ filter(Course → boolean)    Stream<Course>
+→ sorted(Course code)         Stream<Course>
+→ toList()                    List<Course>
+```
+
+返回 `List<Course>` 是因为业务要求保留按 code 排序的结果。`toList()` 是生成 List 的操作，不是选择 List 的业务原因。
+
+假设 Catalog 有 `n` 个课程，其中 `k` 个符合标签：
+
+- `filter()`：`O(n)`；
+- `sorted()`：`O(k log k)`；
+- `toList()`：`O(k)`；
+- 总体：`O(n + k log k)`；
+- 最坏 `k = n`，总体为 `O(n log n)`。
 
 ### 2.14 File I/O
 
@@ -1067,3 +1167,8 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 55. 为什么 `value++` 不是原子操作？
 56. 什么是 race condition 和 lost update？
 57. `synchronized` 如何保护共享修改？
+58. 为什么 Lambda 不一定返回 `boolean`？
+59. `Predicate<T>`、`Function<T, R>` 和 `Comparator<T>` 的输入输出分别是什么？
+60. `getCoursesWithTag()` 的 Stream 在每一步是什么类型？
+61. 为什么查询结果选择 `List<Course>`？
+62. 标签筛选和排序的整体最坏时间复杂度是什么？

@@ -49,7 +49,7 @@ SecureStudy V1 范围：
 - Generics、`Predicate`、Lambda 和 Stream 筛选排序；
 - File I/O、异常传播、JDK/JRE/JVM、stack、heap 和 GC 基础。
 
-当前阶段：第 6 周进行中，正在学习基础线程概念与 Java 阶段复习。
+当前阶段：第 6 周已完成，准备进入 GitHub、Pull Request 和冲突处理。
 
 ## 3. 每周负担
 
@@ -77,7 +77,7 @@ UB 作业或考试繁忙时缩减到 2 至 3 小时：
 | 第 3 周  | 已完成 | Collections：`List`、`Set`、`Map`                 | 管理多个课程，按课程编号查找并处理重复数据                      | 能解释三种集合的用途和基本复杂度                               |
 | 第 4 周  | 已完成 | Generics、Lambda、Stream 基础                      | 查询即将到来的考试，按日期排序和筛选                         | 能读懂和编写简单 Lambda，不写复杂 Stream 链                  |
 | 第 5 周  | 已完成 | File I/O、异常传播、JVM 基础                           | 导出课程摘要到文本文件并读取                             | 理解 heap、stack、JDK、JRE、JVM 和文件异常                |
-| 第 6 周  | 进行中 | Thread、Runnable、race condition 概念；Java 阶段复习    | 完成独立并发小练习，不加入正式业务功能                        | 了解基础线程问题，不要求掌握高级并发                             |
+| 第 6 周  | 已完成 | Thread、Runnable、race condition 概念；Java 阶段复习    | 完成独立并发小练习，不加入正式业务功能                        | 了解基础线程问题，不要求掌握高级并发                             |
 | 第 7 周  | 未开始 | GitHub：remote、push、pull、PR、merge conflict、tag  | 创建 GitHub 仓库，通过 PR 合并一次功能                  | 能自己解决一次人为制造的冲突                                 |
 | 第 8 周  | 未开始 | PostgreSQL、SQL CRUD、主键和约束                      | 安装 PostgreSQL，手写 `users` 和 `courses` 表     | 能执行 CREATE、INSERT、SELECT、UPDATE、DELETE         |
 | 第 9 周  | 未开始 | 外键、JOIN、GROUP BY、ORDER BY、ER 图                 | 设计 `users`、`courses`、`exams`、`study_tasks` | ER 图合理，能编写基础 JOIN 查询                           |
@@ -174,17 +174,18 @@ UB 作业或考试繁忙时缩减到 2 至 3 小时：
 
 ## 8. 当前下一步
 
-第 5 周验收结果：
+第 6 周验收结果：
 
-- 使用 `Path` 和 `Files` 写入并读回课程摘要；
-- `CourseSummaryExporter` 将摘要导出到调用者指定位置；
-- 能区分 `IllegalArgumentException` 与 `IOException`；
-- 能解释 JDK、JRE、JVM、stack、heap、引用和 GC 基础；
-- 33 个 JUnit 测试通过。
+- 完成 Thread、Runnable、`start()` 和 `join()` 实验；
+- 使用 `synchronized` 保护两个线程共享的计数器；
+- 能解释原子操作、race condition 和 lost update；
+- 综合使用 Map、Lambda、Stream、排序、验证和 JUnit；
+- 37 个 JUnit 测试通过；
+- Java 基础关卡通过。
 
-第 6 周下一步：
+第 7 周下一步：
 
-> 学习 Thread、Runnable 和 race condition 概念，并完成 Java 基础阶段复习。
+> 创建 GitHub 远程仓库，练习 push、pull、Pull Request 和 merge conflict。
 
 ## 9. 每周复盘模板
 
