@@ -47,9 +47,10 @@ SecureStudy V1 范围：
 - composition、`LocalDate`、`Exam` 对象和 `ExamStatus` enum；
 - `List`、`Set`、`Map`、课程目录和唯一课程标签；
 - Generics、`Predicate`、Lambda 和 Stream 筛选排序；
-- File I/O、异常传播、JDK/JRE/JVM、stack、heap 和 GC 基础。
+- File I/O、异常传播、JDK/JRE/JVM、stack、heap 和 GC 基础；
+- GitHub remote、首次 push 和远程分支跟踪。
 
-当前阶段：第 6 周已完成，准备进入 GitHub、Pull Request 和冲突处理。
+当前阶段：第 7 周进行中，已创建 GitHub 仓库并完成首次 push，下一步练习 Pull Request。
 
 ## 3. 每周负担
 
@@ -78,7 +79,7 @@ UB 作业或考试繁忙时缩减到 2 至 3 小时：
 | 第 4 周  | 已完成 | Generics、Lambda、Stream 基础                      | 查询即将到来的考试，按日期排序和筛选                         | 能读懂和编写简单 Lambda，不写复杂 Stream 链                  |
 | 第 5 周  | 已完成 | File I/O、异常传播、JVM 基础                           | 导出课程摘要到文本文件并读取                             | 理解 heap、stack、JDK、JRE、JVM 和文件异常                |
 | 第 6 周  | 已完成 | Thread、Runnable、race condition 概念；Java 阶段复习    | 完成独立并发小练习，不加入正式业务功能                        | 了解基础线程问题，不要求掌握高级并发                             |
-| 第 7 周  | 未开始 | GitHub：remote、push、pull、PR、merge conflict、tag  | 创建 GitHub 仓库，通过 PR 合并一次功能                  | 能自己解决一次人为制造的冲突                                 |
+| 第 7 周  | 进行中 | GitHub：remote、push、pull、PR、merge conflict、tag  | 创建 GitHub 仓库，通过 PR 合并一次功能                  | 能自己解决一次人为制造的冲突                                 |
 | 第 8 周  | 未开始 | PostgreSQL、SQL CRUD、主键和约束                      | 安装 PostgreSQL，手写 `users` 和 `courses` 表     | 能执行 CREATE、INSERT、SELECT、UPDATE、DELETE         |
 | 第 9 周  | 未开始 | 外键、JOIN、GROUP BY、ORDER BY、ER 图                 | 设计 `users`、`courses`、`exams`、`study_tasks` | ER 图合理，能编写基础 JOIN 查询                           |
 | 第 10 周 | 未开始 | Transaction、ACID、INDEX、数据库进程和连接                | 实验事务回滚，观察 PostgreSQL 进程和端口                 | 能解释 host、port、credentials 和 connection refused |
@@ -183,9 +184,15 @@ UB 作业或考试繁忙时缩减到 2 至 3 小时：
 - 37 个 JUnit 测试通过；
 - Java 基础关卡通过。
 
-第 7 周下一步：
+第 7 周当前进度：
 
-> 创建 GitHub 远程仓库，练习 push、pull、Pull Request 和 merge conflict。
+- 已创建公开仓库 `https://github.com/Chx999/SecureStudy`；
+- 已配置 `origin`，并让本地 `main` 跟踪 `origin/main`；
+- 已完成首次 push。
+
+下一步：
+
+> 创建功能分支并通过第一个 Pull Request 合并一项小功能。
 
 ## 9. 每周复盘模板
 

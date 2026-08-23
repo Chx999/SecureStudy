@@ -798,6 +798,41 @@ target/
 
 编译产物可以通过源代码重新生成，不应提交，否则会增加仓库体积并产生无意义的修改。
 
+### 4.7 GitHub remote 和首次 push
+
+Git 是本地版本控制工具，GitHub 是托管 Git 仓库的远程平台。没有 GitHub 时，本地仍然可以 commit、创建分支和合并；remote 用于连接本地仓库与远程仓库。
+
+当前远程仓库：
+
+```text
+https://github.com/Chx999/SecureStudy
+```
+
+查看 remote：
+
+```bash
+git remote -v
+```
+
+`origin` 是远程仓库地址的本地别名，不是特殊服务器名称。首次推送通常使用：
+
+```bash
+git push -u origin main
+```
+
+- `push`：把本地已有的 commit 上传到远程；
+- `origin`：目标远程仓库；
+- `main`：要推送的本地分支；
+- `-u`：建立本地 `main` 与远程 `origin/main` 的跟踪关系。
+
+建立跟踪关系后，在 `main` 上通常可以简写为：
+
+```bash
+git push
+```
+
+`push` 只上传 commit，不会上传工作区中尚未提交的修改。`origin/main` 是 Git 在本地保存的远程分支状态记录，不是另一个需要直接编辑的本地分支。
+
 ## 5. Maven 基础
 
 ### 5.1 Maven 是什么
@@ -1172,3 +1207,7 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 60. `getCoursesWithTag()` 的 Stream 在每一步是什么类型？
 61. 为什么查询结果选择 `List<Course>`？
 62. 标签筛选和排序的整体最坏时间复杂度是什么？
+63. Git 和 GitHub 分别负责什么？
+64. `origin` 表示什么？
+65. `git push -u origin main` 的每一部分表示什么？
+66. 为什么 `git push` 不会上传尚未 commit 的修改？
