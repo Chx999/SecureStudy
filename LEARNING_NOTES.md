@@ -924,6 +924,81 @@ git fetch --prune
 git status
 ```
 
+### 4.10 Merge conflict
+
+当两个分支修改同一文件的同一位置，而且 Git 无法自动选择最终内容时，merge 会暂停并产生冲突。冲突不是仓库损坏，而是在等待人工决定。
+
+冲突标记如下。为了避免 Git 将笔记示例误判为真实遗留标记，示例前增加了一个空格；真实冲突文件中的标记从行首开始：
+
+```text
+ <<<<<<< HEAD
+当前分支的内容
+ =======
+正在合并进来的分支内容
+ >>>>>>> branch-name
+```
+
+解决流程：
+
+```bash
+# 1. 编辑文件，保留最终内容并删除全部冲突标记
+# 2. 检查状态和格式
+git diff --check
+git status
+
+# 3. 标记冲突已解决
+git add <conflicted-file>
+
+# 4. 创建 merge commit，结束合并
+git commit -m "Merge branch-name into current-branch"
+```
+
+冲突期间的 `UU` 表示双方都修改了文件且尚未解决。文件编辑正确后仍会显示 `UU`，直到执行 `git add`，明确告诉 Git 已接受当前文件作为最终结果。
+
+如果不想继续本次合并，可以在创建 merge commit 前执行：
+
+```bash
+git merge --abort
+```
+
+当前实验让 `practice/conflict-left` 和 `practice/conflict-right` 对同一标题作不同修改，在 right 分支执行 `git merge practice/conflict-left` 触发冲突，最终人工组合为 `PR 工作流总结` 并创建双父节点的 merge commit。
+
+删除远程分支时，命令接收的是远程上的真实分支名，不要重复写 `origin/`：
+
+```bash
+git push origin --delete docs/pr-workflow-summary
+```
+
+### 4.11 Git tag
+
+分支是会随着新 commit 移动的指针，tag 通常固定指向某个重要 commit，用于标记版本或里程碑。
+
+```text
+main → 新 commit → 新 commit
+          ↑
+     learning-week-07
+```
+
+推荐使用 annotated tag，它除了指向 commit，还保存 tag message、创建者和时间：
+
+```bash
+git tag -a learning-week-07 -m "Complete Git and GitHub foundations"
+git show learning-week-07
+```
+
+tag 不会随普通 `git push` 自动上传，需要单独推送：
+
+```bash
+git push origin learning-week-07
+```
+
+查看 tag：
+
+```bash
+git tag --list
+git ls-remote --tags origin
+```
+
 ## 5. Maven 基础
 
 ### 5.1 Maven 是什么
@@ -1306,3 +1381,8 @@ Git 会找不到该分支。这不是 `--ff-only` 参数错误，而是该操作
 68. 为什么创建 PR 前必须先 commit 并 push 功能分支？
 69. `git pull` 和 Pull Request 有什么区别？
 70. PR 在 GitHub 合并后，为什么本地 `main` 仍可能需要 pull？
+71. merge conflict 在什么情况下产生？
+72. 冲突标记中的 `HEAD` 和传入分支分别是哪一部分？
+73. 为什么编辑完冲突文件后还需要执行 `git add`？
+74. branch 和 tag 的指针行为有什么区别？
+75. 为什么普通 `git push` 不一定会上传 tag？
